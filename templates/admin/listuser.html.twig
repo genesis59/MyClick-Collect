@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="mt-3">Liste des utilisateurs MyClick&Collect</h1>
+    <div class="row mt-4 justify-content-center">
+        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
+        <a href="{{  path('admin_home') }}" class="text-light align-self-center">Retour à l'accueil de l'administration</a>
+        </div>
+        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
+            <a href="{{ path('admin_listcategories') }}" class="text-light">Gérer les catégories</a>
+        </div>
+    </div>
+    <h2>Rechercher un utilisateur :</h2><p></p>
+    {{ form_start(formSearch)}}
+    <div class="row mt-4">
+        <div class="col">
+            {{ form_row(formSearch.emailSearch)}}
+        </div>
+        <div class="col">
+            {{ form_row(formSearch.lastNameSearch)}}
+        </div>
+        <div class="col">
+            <button class="btn btn-primary">Rechercher</button>
+        </div>
+    </div>
+    {{ form_end(formSearch)}}
+    <div class="row justify-content-center mt-4">
+        {{ knp_pagination_render(users) }}
+    </div>
+    {% if (numberResultUser <= 1) %}
+        <p>{{ numberResultUser }} résultat trouvé</p>
+    {% else %}
+        <p>{{ numberResultUser }} résultats trouvés</p>
+    {% endif %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">{{ knp_pagination_sortable(users,'Nom','lastName') }}</th>
+                <th scope="col">{{ knp_pagination_sortable(users,'Prénom','firstName') }}</th>
+                <th scope="col">{{ knp_pagination_sortable(users,'Email','email') }}</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">CP</th>
+                <th scope="col">Ville</th>
+                <th scope="col">Téléphone</th>
+                <th scope="col">Rôle</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.streetNumber }},{{ user.street }}</td>
+                        <td>{{ user.town.zipCode }}</td>
+                        <td>{{ user.town.nameTown }}</td>
+                        <td>{{ user.phoneNumber }}</td>
+                        <td>
+                            {% for role in user.roles %}
+                            {% if role == 'ROLE_ADMIN' %}Administrateur {% endif %}
+                            {% if role == 'ROLE_TRADER' %}Commerçant {% endif %}
+                            {% if role == 'ROLE_USER' %}Utilisateur {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            <td class="btn btn-danger">L'administrateur ne peut être modifié ici</td>
+                        {% else %}
+                            <td><a href="{{ path('admin_editroleuser',{'id':user.id})}}" class="btn btn-success">Modifier le rôle</a></td>      
+                        {% endif %}
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row justify-content-center">
+        {{ knp_pagination_render(users) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function (){
+            $("th").children().addClass('text-light');
+        })
+    </script>
+{% endblock %}

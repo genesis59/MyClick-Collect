@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout nouveau magasin{% endblock %}
+
+{% block body %}
+<h1>Ajout d'un nouveau magasin</h1>
+<div class="container border border-dark p-4 bg-secondary">
+    <h3> Remplissez les champs puis valider.</h3>
+        {{ form_start(formNewShop) }}
+        
+        {{ form_end(formNewShop) }}
+</div>  
+{% endblock %}
+{% block javascripts %}
+<script src="/js/app.js"></script>
+{% endblock %}

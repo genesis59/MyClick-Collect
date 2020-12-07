@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil Administration{% endblock %}
+
+{% block body %}
+<div class="container p-3">
+    <h1>Accueil administration MyClick&Collect</h1>
+    <div class="row mt-4 justify-content-center">
+        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
+        <a href="{{ path('admin_listuser') }}" class="text-light align-self-center">Gérer les rôles utilisateurs</a>
+        </div>
+        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
+            <a href="{{ path('admin_listcategories') }}" class="text-light">Gérer les catégories</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

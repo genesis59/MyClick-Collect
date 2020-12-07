@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block title %}Editer rôles utilisateurs{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row my-3">
+        <h1>Voulez-vous modifier le rôle de cette utilisateur ?</h1>
+        <a href="{{path('admin_listuser') }}" class="btn btn-primary ml-3 align-self-center">Retour à la liste d'utilisateurs</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Adresse</th>
+                <th scope="col">CP</th>
+                <th scope="col">Ville</th>
+                <th scope="col">Téléphone</th>
+                <th scope="col">Rôle(s) actuel</th>
+            </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.streetNumber }},{{ user.street }}</td>
+                        <td>{{ user.town.zipCode }}</td>
+                        <td>{{ user.town.nameTown }}</td>
+                        <td>{{ user.phoneNumber }}</td>
+                        <td>
+                            {% for role in user.roles %}
+                            {% if role == 'ROLE_ADMIN' %}Administrateur {% endif %}
+                            {% if role == 'ROLE_TRADER' %}Commerçant {% endif %}
+                            {% if role == 'ROLE_USER' %}Utilisateur {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+    <fieldset class="border border-dark p-4">
+        <legend> Modifier le rôle de l'utilisateur puis valider.</legend>
+        <div class="row">
+                {{ form_start(editRoleForm) }}
+                {{ form_end(editRoleForm) }}
+        </div>
+    </fieldset>   
+</div>
+
+{% endblock %}

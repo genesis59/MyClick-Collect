@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration magasin{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3 bg-secondary text-center">
+        <h3 class="mt-3">Selectionnez une action :</h3>
+        <div class="row">
+            <div class="col">
+                <a href="{{ path('shop_new-shop')}}" class="btn btn-dark btn-block my-3">Créer un commerce</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="dropdown">
+                    <a role="button" class="btn btn-dark btn-block mb-3 dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Editer un commerce
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        {% for shop in shopList %}
+                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="dropdown-item" type="button">{{ shop.nameShop }}</a>
+                        {% endfor %}
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 col-lg-9 mb-5">
+        <div class="container">
+            <h1 class="mt-4">Bienvenue {{ current_user.firstName }} sur votre espace de gestion !!!</h1>
+        </div>
+    </div>
+</div>
+{% endblock %}
