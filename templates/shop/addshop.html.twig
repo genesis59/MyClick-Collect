@@ -1,13 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajout nouveau magasin{% endblock %}
+{% block title %}{% if current_menu == 'new-shop' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}magasin{% endblock %}
 
 {% block body %}
-<h1>Ajout d'un nouveau magasin</h1>
-<div class="container border border-dark p-4 bg-secondary">
+<h1>{% if current_menu == 'new-shop' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}magasin</h1>
+<div class="container border border-dark p-4 mt-4 bg-secondary">
     <h3> Remplissez les champs puis valider.</h3>
         {{ form_start(formNewShop) }}
-        
+        <div class="row">
+            <div class="col-md-4">{{ form_row(formNewShop.nameShop) }}</div>
+            <div class="col-md-4">{{ form_row(formNewShop.picture) }}</div>
+            <div class="col-md-4">{{ form_row(formNewShop.category) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">{{ form_row(formNewShop.streetNumber) }}</div>
+            <div class="col-md-6">{{ form_row(formNewShop.street) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">{{ form_row(formNewShop.region) }}</div>
+            <div class="col-md-4">{{ form_row(formNewShop.department) }}</div>
+            <div class="col-md-4">{{ form_row(formNewShop.town) }}</div>
+        </div>
+        <div class="row">
+            <div class="col">{{ form_row(formNewShop.presentation) }}</div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div>
+                    {{ form_row(formNewShop.create) }}
+                </div>
+                <div class="ml-2">
+                    <a href="{{ path('shop_admin') }}" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
         {{ form_end(formNewShop) }}
 </div>  
 {% endblock %}

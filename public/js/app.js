@@ -1,4 +1,4 @@
-$(document).on('change', '#shop_region, #shop_department', function(){
+$(document).on('change', '#shop_region, #shop_department', function () {
     let $field = $(this)
     let $regionField = $('#shop_region')
     let $nameShop = $('#shop_nameShop')
@@ -8,7 +8,7 @@ $(document).on('change', '#shop_region, #shop_department', function(){
     let $street = $('#shop_street')
 
     let $form = $field.closest('form')
-    let target = '#' + $field.attr('id').replace('department','town').replace('region','department')
+    let target = '#' + $field.attr('id').replace('department', 'town').replace('region', 'department')
     let data = {}
 
     data[$regionField.attr('name')] = $regionField.val()
@@ -21,10 +21,10 @@ $(document).on('change', '#shop_region, #shop_department', function(){
 
 
 
-    
-    $.post($form.attr('action'),data).then(function(data){
-        
-        let $input = $(data).find(target)
-        $(target).replaceWith($input)
+
+    $.post($form.attr('action'), data).then(function (data) {
+            let $input = $(data).find(target)
+            $(target).replaceWith($input)
+
     })
 })

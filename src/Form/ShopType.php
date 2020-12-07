@@ -10,13 +10,16 @@ use App\Entity\Towns;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ShopType extends AbstractType
 {
@@ -25,23 +28,52 @@ class ShopType extends AbstractType
         $builder
 
             ->add('nameShop', TextType::class, [
-                'required' => false
+                'required' => false,
+                'label' => 'Nom du magasin'
             ])
-            ->add('picture', TextType::class)
-            ->add('presentation')
-            ->add('streetNumber')
-            ->add('street')
+            ->add('picture', FileType::class,[
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Image du magasin',
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp'
+                        ],
+                        'mimeTypesMessage' => 'Seul les formats suivants sont autorisés (jpg,jpeg,png,webp)'
+                    ])
+                ],
+            ])
+            ->add('presentation',TextareaType::class,[
+                'label' => 'Présentation',
+                'attr' => [
+                    'rows' => 6
+                ]
+            ])
+            ->add('streetNumber',TextType::class,[
+                'label' => 'Numéro de la voie (bis,ter,...)'
+            ])
+            ->add('street',TextType::class,[
+                'label' => 'Rue'
+            ])
             ->add('category', EntityType::class, [
                 'class' => ShopCategories::class,
-                'choice_label' => 'name_category'
+                'choice_label' => 'name_category',
+                'label' => 'Type de magasin'
             ])
             ->add('region', EntityType::class, [
                 'class' => Regions::class,
                 'placeholder' => 'Sélectionnez votre région',
                 'mapped' => false,
-                'required' => false
+                'required' => false,
+                'label' => 'Région'
             ])
-            ->add('create', SubmitType::class);
+            ->add('create', SubmitType::class,[
+                'label' => 'Valider'
+            ]);
 
         $builder->get('region')->addEventListener(
             FormEvents::POST_SUBMIT,
@@ -55,12 +87,8 @@ class ShopType extends AbstractType
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) {
                 $data = $event->getData();
-                dump($data);
                 $town = $data->getTown();
-
                 $form = $event->getForm();
-                dump($form);
-                dump($town);
                 if ($town) {
                     $department = $town->getDepartment();
                     $region = $department->getRegion();
@@ -77,7 +105,7 @@ class ShopType extends AbstractType
     }
 
     /**
-     * ADD FIELD DEPARTMENT AT FORM
+     * add field department at form
      *
      * @param FormInterface $form
      * @param Regions $regions
@@ -95,7 +123,8 @@ class ShopType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                     'auto_initialize' => false,
-                    'choices' => $regions ? $regions->getDepartments() : []
+                    'choices' => $regions ? $regions->getDepartments() : [],
+                    'label' => 'Département'
                 ]
             );
         $builder->addEventListener(
@@ -110,7 +139,7 @@ class ShopType extends AbstractType
     }
 
     /**
-     * ADD FIELD TOWN AT FORM
+     * add field town at form
      *
      * @param FormInterface $form
      * @param Departments $departments
@@ -124,7 +153,8 @@ class ShopType extends AbstractType
                 'class' => Towns::class,
                 'placeholder' => $departments ? 'Sélectionnez votre ville' : 'Selectionnez votre département',
                 'choices' => $departments ? $departments->getTowns() : [],
-                'required' => false
+                'required' => false,
+                'label' => 'Ville'
             ]
         );
     }

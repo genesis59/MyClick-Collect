@@ -29,7 +29,7 @@ class ShopController extends AbstractController
             'current_user' => $this->getUser(),
             'shopList' => $shopList
         ]);
-    }  
+    }
 
     /**
      * CREATE NEW OR EDIT SHOP 
@@ -41,21 +41,41 @@ class ShopController extends AbstractController
      * @param Shops $shop
      * @return void
      */
-    public function addEditShop(Request $request, EntityManagerInterface $manager, Shops $shop = null){
-        if(!$shop){
+    public function addEditShop(Request $request, EntityManagerInterface $manager, Shops $shop = null)
+    {
+        if (!$shop) {
             $shop = new Shops();
             $shop->setTrader($this->getUser());
+            $current_menu = 'new-shop';
+        } else {
+            $current_menu = 'edit-shop';
+
         }
-        $formShop = $this->createForm(ShopType::class,$shop);
+        $formShop = $this->createForm(ShopType::class, $shop);
         $formShop->handleRequest($request);
-        if($formShop->isSubmitted() && $formShop->isValid()){
+        dump($shop->getPicture());
+
+        if ($formShop->isSubmitted() && $formShop->isValid()) {
+            if ($file = $formShop->get('picture')->getData()) {
+                if ($shop->getPicture()) {
+                    $pastPicture = $this->getParameter('upload_directory') . '/' . $shop->getPicture();
+                    if(file_exists($pastPicture)){
+                        unlink($pastPicture);
+                    }
+                }
+
+                $file = $formShop->get('picture')->getData();
+                $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                $file->move($this->getParameter('upload_directory'), $fileName);
+                $shop->setPicture($fileName);
+            }
             $manager->persist($shop);
             $manager->flush();
             return $this->redirectToRoute('shop_admin');
         }
         return $this->render('shop/addshop.html.twig', [
             'controller_name' => 'ShopController',
-            'current_menu' => 'shop',
+            'current_menu' => $current_menu,
             'current_user' => $this->getUser(),
             'formNewShop' => $formShop->createView(),
         ]);
