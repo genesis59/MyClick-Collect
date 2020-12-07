@@ -22,7 +22,7 @@ use Knp\Component\Pager\PaginatorInterface;
 class AdminController extends AbstractController
 {
     /**
-     * ADMINISTRATION HOME 
+     * administration home 
      * @Route("/home", name="home")
      */
     public function index(): Response
@@ -35,7 +35,7 @@ class AdminController extends AbstractController
 
     /************************************** USERS MANAGER *****************************/
     /**
-     * LIST AND SEARCH USERS
+     * list and search users
      * @Route("/listuser", name="listuser")
      *
      * @param UserRepository $userRepository
@@ -59,7 +59,7 @@ class AdminController extends AbstractController
         ]);
     }
     /**
-     * ROLE USER MANAGER
+     * role user manager
      * @Route("/editroleuser/{id}", name="editroleuser")
      *
      * @param Request $request
@@ -84,7 +84,7 @@ class AdminController extends AbstractController
 
     /*********************************** CATEGORIES MANAGER ****************************/
     /**
-     * LIST AND ADD CATEGORIES
+     * list and add categories
      * @Route("/listcategories", name="listcategories")
      *
      * @param ShopCategoriesRepository $category
@@ -108,7 +108,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * UPDATE CATEGORY
+     * update category
      * @Route("/editcategory/{id}", name="editcategory")
      *
      * @param ShopCategories $category
@@ -129,7 +129,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * DELETE CATEGORY
+     * delete category
      * @Route("/deletecategory/{id}", name="deletecategory")
      *
      * @param ShopCategories $category

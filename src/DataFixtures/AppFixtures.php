@@ -6,6 +6,7 @@ use App\Entity\Addresses;
 use App\Entity\Departments;
 use App\Entity\Regions;
 use App\Entity\ShopCategories;
+use App\Entity\Shops;
 use App\Entity\Towns;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -36,6 +37,7 @@ class AppFixtures extends Fixture
         // Création de tableau pour création d'autres entités nécéssitant ces objets
         $tabTown = [];
         $tabUsers = [];
+        $tabCategoriesObject = [];
         //  Création des régions avant insertion dans la base de données
         foreach ($listRegions as $item) {
             $region = new Regions();
@@ -101,7 +103,25 @@ class AppFixtures extends Fixture
         foreach ($tabCategories as $item) {
             $category = new ShopCategories();
             $category->setNameCategory($item);
+            // Ajout des objets catégories au tableau
+            array_push($tabCategoriesObject, $category);
             $manager->persist($category);
+        }
+        // Création de magasin 20/user pour 10 user
+        for($i = 0; $i <10; $i++){
+            $user = $faker->randomElement($tabUsers);
+            for($i = 0; $i <20; $i++){
+                $shop = new Shops();
+                $shop->setNameShop($faker->company)
+                    ->setTrader($user)
+                    ->setCategory($faker->randomElement($tabCategoriesObject))
+                    ->setTown($faker->randomElement($tabTown))
+                    ->setPicture($faker->imageUrl($width = 200, $height = 160))
+                    ->setPresentation($faker->paragraph($nbSentences = 3, $variableNbSentences = true))
+                    ->setStreetNumber($faker->buildingNumber)
+                    ->setStreet($faker->streetName);
+                $manager->persist($shop);
+            }
         }
 
 

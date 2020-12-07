@@ -6,6 +6,7 @@ use App\Entity\Shops;
 use App\Form\ShopType;
 use App\Repository\ShopsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +21,14 @@ class ShopController extends AbstractController
      * SHOP HOME
      * @Route("/admin", name="admin")
      */
-    public function index(ShopsRepository $shopsRepository): Response
+    public function index(Request $request ,ShopsRepository $shopsRepository, PaginatorInterface $paginator): Response
     {
-        $shopList = $shopsRepository->findShopByUser($this->getUser());
+        $shops = $shopsRepository->findShopByUser($this->getUser());
+        $shopList = $paginator->paginate(
+            $shops,
+            $request->query->getInt('page',1),
+            9
+        );
         return $this->render('shop/index.html.twig', [
             'controller_name' => 'ShopController',
             'current_menu' => 'shop',
