@@ -110,16 +110,17 @@ class AppFixtures extends Fixture
         // Création de magasin 20/user pour 10 user
         for($i = 0; $i <10; $i++){
             $user = $faker->randomElement($tabUsers);
-            for($i = 0; $i <20; $i++){
+            for($j = 1; $j <=20; $j++){
                 $shop = new Shops();
                 $shop->setNameShop($faker->company)
                     ->setTrader($user)
                     ->setCategory($faker->randomElement($tabCategoriesObject))
                     ->setTown($faker->randomElement($tabTown))
-                    ->setPicture($faker->imageUrl($width = 200, $height = 160))
+                    ->setPicture($j . '.jpg')
                     ->setPresentation($faker->paragraph($nbSentences = 3, $variableNbSentences = true))
                     ->setStreetNumber($faker->buildingNumber)
                     ->setStreet($faker->streetName);
+                
                 $manager->persist($shop);
             }
         }

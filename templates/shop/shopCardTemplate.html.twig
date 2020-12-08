@@ -1,0 +1,23 @@
+<div class="row">
+    <!-- shopList must be defined in the controller -->
+    {% for shop in shopList %}
+        <div class="col-lg-6 col-xl-4 ">
+            <div class="card border border-dark mt-4 ml-5  bg-secondary" style="width: 18rem;">
+                <img class="card-img-top" src="/images/{{ shop.picture }}" alt="Photo du magasin" height="160" width="200">
+                <div class="card-body">
+                    <h5 class="card-title">{{ shop.nameShop }}</h5>
+                    <p class="card-text">{{ shop.presentation | u.truncate(50,' [...]',false) }}</p>
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn btn-primary btn-block">Entrer</a> 
+                        </div>
+                        <div class="col">
+                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-primary btn-block">Editer</a> 
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    {% endfor %}
+</div> 

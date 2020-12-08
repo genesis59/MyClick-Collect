@@ -6,3 +6,6 @@ html {
     margin: 0;
     padding: 0;
   }
+  h1 {
+    text-shadow: 3px 3px rgb(161, 160, 153);
+  }
