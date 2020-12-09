@@ -119,7 +119,9 @@ class AppFixtures extends Fixture
                     ->setPicture($j . '.jpg')
                     ->setPresentation($faker->paragraph($nbSentences = 3, $variableNbSentences = true))
                     ->setStreetNumber($faker->buildingNumber)
-                    ->setStreet($faker->streetName);
+                    ->setStreet($faker->streetName)
+                    ->setEmail($faker->email)
+                    ->setPhoneNumber($faker->phoneNumber);
                 
                 $manager->persist($shop);
             }

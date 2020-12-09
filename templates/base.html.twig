@@ -3,15 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" type="image/png" href="/images/Click_Collect-Logo.png" />
+        <link rel="icon" type="image/png" href="{{ asset('images/Click_Collect-Logo.png') }}" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></link>
         {% block stylesheets %}
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"></link>
-            <link rel="stylesheet" href="/css/style.css"></link>
-            
+                 
         {% endblock %}
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}"></link> 
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-primary">
             <a class="navbar-brand" href="{{ path('home') }}">MyClick&Collect</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -37,12 +37,12 @@
                   {% for role in app.user.roles %}
                     {% if (role == 'ROLE_ADMIN' and current_menu is defined and current_menu != 'admin') %}
                       <li class="nav-item ml-3">
-                        <a class="nav-link btn btn-success text-white" href="{{ path('admin_home') }}">Espace administration</a>
+                        <a class="nav-link btn btn-dark text-white" href="{{ path('admin_home') }}">Espace administration</a>
                       </li>
                     {% endif %}
                     {% if (role == 'ROLE_TRADER' and current_menu is defined and current_menu != 'shop') %}
                       <li class="nav-item ml-3">
-                        <a class="nav-link btn btn-warning text-white" href="{{ path('shop_admin') }}">Espace gestion magasins</a>
+                        <a class="nav-link btn btn-dark text-white" href="{{ path('shop_admin') }}">Espace gestion magasins</a>
                       </li>
                     {% endif %}
                   {% endfor %}

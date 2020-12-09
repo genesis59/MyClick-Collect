@@ -10,6 +10,7 @@ use App\Entity\Towns;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -52,6 +53,12 @@ class ShopType extends AbstractType
                 'attr' => [
                     'rows' => 6
                 ]
+            ])
+            ->add('email',EmailType::class,[
+                'label' => 'Email du magasin'
+            ])
+            ->add('phoneNumber',TextType::class,[
+                'label' => 'Numéro de téléphone'
             ])
             ->add('streetNumber',TextType::class,[
                 'label' => 'Numéro de la voie (bis,ter,...)'

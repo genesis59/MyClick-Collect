@@ -15,10 +15,14 @@ class HomeController extends AbstractController
      */
     public function index(ShopsRepository $shopsRepository ,ShopCategoriesRepository $shopCategoriesRepository): Response
     {
+        // recupération de la liste des magasins
         $shopList = $shopsRepository->findAll();
+        // récupération de 12 clés aléatoire des données de $shopList
         $tabRandomShopList = array_rand($shopList,12);
+        // Initialisation d'un tableau pour récupérer les objets Shops
         $shopRandomList = [];
         foreach($tabRandomShopList as $idRandom){
+            //Insertion des objets Shops à l'aide des clés aléatoire récupérer au préalable
              array_push($shopRandomList,$shopList[$idRandom]);
         }
         return $this->render('home/index.html.twig', [

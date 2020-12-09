@@ -5,7 +5,8 @@ html {
     height: 100%;
     margin: 0;
     padding: 0;
+    background-color: #C7B49B; 
   }
   h1 {
-    text-shadow: 3px 3px rgb(161, 160, 153);
+    text-shadow: 3px 3px #888;
   }

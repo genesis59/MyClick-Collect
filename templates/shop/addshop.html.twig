@@ -4,13 +4,17 @@
 
 {% block body %}
 <h1>{% if current_menu == 'new-shop' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}magasin</h1>
-<div class="container border border-dark p-4 mt-4 bg-secondary">
+<div class="container border border-dark p-4 mt-4 bg-dark text-white">
     <h3> Remplissez les champs puis valider.</h3>
         {{ form_start(formNewShop) }}
         <div class="row">
             <div class="col-md-4">{{ form_row(formNewShop.nameShop) }}</div>
             <div class="col-md-4">{{ form_row(formNewShop.picture) }}</div>
             <div class="col-md-4">{{ form_row(formNewShop.category) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">{{ form_row(formNewShop.email) }}</div>
+            <div class="col-md-6">{{ form_row(formNewShop.phoneNumber) }}</div>
         </div>
         <div class="row">
             <div class="col-md-6">{{ form_row(formNewShop.streetNumber) }}</div>
@@ -38,5 +42,5 @@
 </div>  
 {% endblock %}
 {% block javascripts %}
-<script src="/js/app.js"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 {% endblock %}

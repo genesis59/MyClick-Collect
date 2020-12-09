@@ -1,22 +1,44 @@
 <div class="row">
     <!-- shopList must be defined in the controller -->
     {% for shop in shopList %}
-        <div class="col-lg-6 col-xl-4 ">
-            <div class="card border border-dark mt-4 ml-5  bg-secondary" style="width: 18rem;">
-                <img class="card-img-top" src="/images/{{ shop.picture }}" alt="Photo du magasin" height="160" width="200">
-                <div class="card-body">
-                    <h5 class="card-title">{{ shop.nameShop }}</h5>
-                    <p class="card-text">{{ shop.presentation | u.truncate(50,' [...]',false) }}</p>
-                    <div class="row">
-                        <div class="col">
-                            <a href="#" class="btn btn-primary btn-block">Entrer</a> 
-                        </div>
-                        <div class="col">
-                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-primary btn-block">Editer</a> 
-                        </div>
+        <div class="col-lg-6 col-xl-4 d-flex align-item-stretch">
+
+
+            <div class="card border border-dark mt-4 ml-5 bg-info" style="width: 18rem;">
+                <div class="btn-group dropleft m-1">
+                    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Détails
+                    </button>
+                    <div class="dropdown-menu">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Propriétaire: {{ shop.trader.lastName }} {{ shop.trader.firstName }}</li>
+                            <li class="list-group-item">Email: {{ shop.email }}</li>
+                            <li class="list-group-item">Tél: {{ shop.phoneNumber }}</li>
+                            <li class="list-group-item">Adresse: {{ shop.streetNumber }},{{ shop.street }} à {{ shop.town }}</li>
+                            <li class="list-group-item">Région: {{ shop.town.department.region }}</li>
+                            <li class="list-group-item">Départment: {{ shop.town.department }}</li>
+                            <li class="list-group-item">Type: {{ shop.category.nameCategory }}</li>
+                        </ul>
                     </div>
                 </div>
+                <img class="card-img-top p-3" src="{{ asset('/images/' ~ shop.picture) }}" alt="Photo du magasin" height="160" width="200">
+                <div class="card-body text-white">           
+                    <h5 class="card-title">{{ shop.nameShop }}</h5>
+                    <p class="card-text">{{ shop.presentation | u.truncate(50,' [...]',false) }}</p>
+                </div>
                 
+                <div class="card-body align-items-end text-white">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn btn-dark btn-block">Entrer</a> 
+                        </div>
+                        {% if (controller_name is defined and controller_name == 'ShopController') %}
+                        <div class="col">
+                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Editer</a> 
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>  
             </div>
         </div>
     {% endfor %}
