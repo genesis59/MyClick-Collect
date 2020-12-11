@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Shops;
+use App\Entity\Towns;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Laminas\Code\Scanner\TokenArrayScanner;
 
 /**
  * @method Shops|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,11 +22,26 @@ class ShopsRepository extends ServiceEntityRepository
         parent::__construct($registry, Shops::class);
     }
 
-    public function findShopByUser(User $user){
+    public function findShopByUser(User $user)
+    {
         return $this->createQueryBuilder('s')
-                    ->where('s.trader=:user')
-                    ->setParameter('user',$user)
-                    ->getQuery()->execute();
+            ->where('s.trader=:user')
+            ->setParameter('user', $user)
+            ->getQuery()->execute();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param Towns $town
+     * @return Shops[]
+     */
+    public function getShopByTown(Towns $town)
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.town=:town')
+            ->setParameter('town', $town)
+            ->getQuery()->getResult();
     }
 
     // /**

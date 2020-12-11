@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Towns;
+use App\Entity\TownSearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,23 @@ class TownsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Towns::class);
+    }
+
+    public function getTownBySearch(TownSearch $search = null)
+    {
+            $query = $this->createQueryBuilder('t');
+            if ($search->getNameTownSearch()) {
+                $query = $query
+                    ->andWhere('t.name_town = :nameTown')
+                    ->setParameter('nameTown', $search->getNameTownSearch());
+            }
+            if ($search->getZipCodeSearch()) {
+                $query = $query
+                    ->andWhere('t.zip_code = :zipCode')
+                    ->setParameter('zipCode', $search->getZipCodeSearch());
+            }
+
+            return $query->getQuery()->execute();
     }
 
     // /**

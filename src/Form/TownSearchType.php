@@ -2,28 +2,26 @@
 
 namespace App\Form;
 
-use App\Entity\Departments;
-use App\Entity\Towns;
+use App\Entity\TownSearch;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TownsType extends AbstractType
+class TownSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name_town',TextType::class,[
+            ->add('nameTownSearch',TextType::class,[
                 'required' => false,
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Nom de la ville'
+                    'placeholder' => 'Ville'
                 ]
             ])
-            ->add('zip_code',TextType::class,[
+            ->add('zipCodeSearch',TextType::class,[
                 'required' => false,
                 'label' => false,
                 'attr' => [
@@ -37,7 +35,16 @@ class TownsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Towns::class,
+            'data_class' => TownSearch::class,
+            'method' => 'get',
+            'csrf_protection' => false
         ]);
     }
+
+    public function getBlockPrefix()
+    {
+        return '';
+    }
+
+
 }

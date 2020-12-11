@@ -5,11 +5,22 @@
 {% block body %}
 <div class="row">
     <div class="col-md-4 col-lg-3 bg-dark">
-        <ul class="mt-4 text-white">
-          {% for category in categories %}
-            <li>{{ category.nameCategory }}</li>
-          {% endfor %}
-        </ul>
+      <div class="container mt-3 border-bottom border-info">
+        <div class="text-white">
+          <p>Recherche une ville :</p>
+        </div>
+        <div>
+          {{ form_start(formSearchTown)}}
+          {{ form_row(formSearchTown.nameTownSearch)}}
+          {{ form_row(formSearchTown.zipCodeSearch)}}
+          {{ form_end(formSearchTown)}}
+        </div>
+      </div>
+      <ul class="mt-4 text-white">
+        {% for category in categories %}
+          <li>{{ category.nameCategory }}</li>
+        {% endfor %}
+      </ul>     
     </div>
     <div class="col-md-8 col-lg-9 mb-5">
         <div class="container">

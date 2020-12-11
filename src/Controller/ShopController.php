@@ -33,7 +33,8 @@ class ShopController extends AbstractController
             'controller_name' => 'ShopController',
             'current_menu' => 'shop',
             'current_user' => $this->getUser(),
-            'shopList' => $shopList
+            'shopList' => $shopList,
+            'message' => false
         ]);
     }
 
@@ -59,7 +60,6 @@ class ShopController extends AbstractController
         }
         $formShop = $this->createForm(ShopType::class, $shop);
         $formShop->handleRequest($request);
-        dump($shop->getPicture());
 
         if ($formShop->isSubmitted() && $formShop->isValid()) {
             if ($file = $formShop->get('picture')->getData()) {
@@ -83,7 +83,7 @@ class ShopController extends AbstractController
             'controller_name' => 'ShopController',
             'current_menu' => $current_menu,
             'current_user' => $this->getUser(),
-            'formNewShop' => $formShop->createView(),
+            'formNewShop' => $formShop->createView()
         ]);
     }
 }

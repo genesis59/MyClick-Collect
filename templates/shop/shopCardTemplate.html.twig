@@ -1,9 +1,17 @@
-<div class="row">
+<div class="row mt-4">
+    {% if message %}
+        <div class="col-3"></div>
+        <div class="col-6 text-center bg-danger text-white rounded">
+            <p class="m-4">
+                Désolé il n'y a encore aucun commerce enregistrer dans cette commune.
+                N'hésitez pas à contacter votre commerçant et lui proposer nos services. 
+            </p>
+        </div>
+        <div class="col-3"></div>
+    {% endif %}
     <!-- shopList must be defined in the controller -->
     {% for shop in shopList %}
         <div class="col-lg-6 col-xl-4 d-flex align-item-stretch">
-
-
             <div class="card border border-dark mt-4 ml-5 bg-info" style="width: 18rem;">
                 <div class="btn-group dropleft m-1">
                     <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -41,5 +49,8 @@
                 </div>  
             </div>
         </div>
-    {% endfor %}
+    {% endfor %} 
 </div> 
+<div class="row justify-content-center mt-4">
+    {{ knp_pagination_render(shopList) }}
+</div>

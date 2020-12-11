@@ -37,6 +37,7 @@ class AppFixtures extends Fixture
         // Création de tableau pour création d'autres entités nécéssitant ces objets
         $tabTown = [];
         $tabUsers = [];
+        $tabTraders = [];
         $tabCategoriesObject = [];
         //  Création des régions avant insertion dans la base de données
         foreach ($listRegions as $item) {
@@ -98,6 +99,23 @@ class AppFixtures extends Fixture
             $manager->persist($user);
         }
 
+        // Création de quelques commerçants
+        for ($i = 0; $i < 100; $i++) {
+            $trader = new User();
+            $trader->setFirstName($faker->firstName(null))
+                ->setLastName($faker->lastName)
+                ->setPhoneNumber($faker->phoneNumber)
+                ->setEmail($faker->email)
+                ->setRoles(['ROLE_USER','ROLE_TRADER'])
+                ->setPassword($this->userPasswordEncoder->encodePassword($trader, 'root'))
+                ->setTown($faker->randomElement($tabTown))
+                ->setStreetNumber($faker->buildingNumber)
+                ->setStreet($faker->streetName);
+            // Ajout des traders au tableau
+            array_push($tabTraders, $trader);
+            $manager->persist($trader);
+        }
+
         // Création de catégories pour les magasins
         $tabCategories = ['Boulangerie', 'Jeux vidéo', 'Bijouterie', 'Boucherie', 'Textile'];
         foreach ($tabCategories as $item) {
@@ -107,17 +125,17 @@ class AppFixtures extends Fixture
             array_push($tabCategoriesObject, $category);
             $manager->persist($category);
         }
-        // Création de magasin 20/user pour 10 user
-        for($i = 0; $i <10; $i++){
-            $user = $faker->randomElement($tabUsers);
-            for($j = 1; $j <=20; $j++){
+        // Création de magasin 3/trader pour 50 trader
+        for($i = 0; $i <50; $i++){
+            $user = $faker->randomElement($tabTraders);
+            for($j = 1; $j <=3; $j++){
                 $shop = new Shops();
                 $shop->setNameShop($faker->company)
                     ->setTrader($user)
                     ->setCategory($faker->randomElement($tabCategoriesObject))
                     ->setTown($faker->randomElement($tabTown))
                     ->setPicture($j . '.jpg')
-                    ->setPresentation($faker->paragraph($nbSentences = 3, $variableNbSentences = true))
+                    ->setPresentation($faker->paragraph(3,true))
                     ->setStreetNumber($faker->buildingNumber)
                     ->setStreet($faker->streetName)
                     ->setEmail($faker->email)
@@ -126,9 +144,6 @@ class AppFixtures extends Fixture
                 $manager->persist($shop);
             }
         }
-
-
-
         $manager->flush();
     }
 }
