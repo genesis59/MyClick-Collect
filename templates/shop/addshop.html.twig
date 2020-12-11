@@ -3,9 +3,12 @@
 {% block title %}{% if current_menu == 'new-shop' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}magasin{% endblock %}
 
 {% block body %}
+
+<div class="container">
 <h1>{% if current_menu == 'new-shop' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}magasin</h1>
-<div class="container border border-dark p-4 mt-4 bg-dark text-white">
+<div class=" border border-dark p-4 mt-4 bg-dark text-white">
     <h3> Remplissez les champs puis valider.</h3>
+    <div class="container mb-5">
         {{ form_start(formNewShop) }}
         <div class="row">
             <div class="col-md-4">{{ form_row(formNewShop.nameShop) }}</div>
@@ -39,7 +42,9 @@
             </div>
         </div>
         {{ form_end(formNewShop) }}
-</div>  
+    </div>
+</div>
+</div> 
 {% endblock %}
 {% block javascripts %}
 <script src="{{ asset('js/app.js') }}"></script>

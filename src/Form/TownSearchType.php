@@ -28,7 +28,6 @@ class TownSearchType extends AbstractType
                     'placeholder' => 'Code postal'
                 ]
             ])
-            ->add('valider',SubmitType::class)
         ;
     }
 
