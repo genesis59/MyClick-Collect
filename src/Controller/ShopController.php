@@ -86,4 +86,25 @@ class ShopController extends AbstractController
             'formNewShop' => $formShop->createView()
         ]);
     }
+
+    /**
+     * 
+     * @Route("/manage/{id}",name="manage-shop")
+     *
+     * @return void
+     */
+    public function manageShop(Shops $shop){
+
+        $subCategories = $shop->getShopSubCategories();
+        $products = $shop->getProducts();
+        
+        return $this->render('shop/manage-shop.html.twig', [
+            'controller_name' => 'ShopAdmin',
+            'current_menu' => 'manageshop',
+            'current_user' => $this->getUser(),
+            'current_shop' => $shop,
+            'sub_categories' => $subCategories,
+            'products' => $products
+        ]);
+    }
 }

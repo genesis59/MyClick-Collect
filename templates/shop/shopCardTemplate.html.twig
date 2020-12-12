@@ -42,7 +42,7 @@
                             <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Modifier</a> 
                         </div>
                         <div class="col-6">
-                            <a href="#" class="btn btn-dark btn-block">Gérer</a> 
+                            <a href="{{ path('shop_manage-shop',{'id':shop.id}) }}" class="btn btn-dark btn-block">Gérer</a> 
                         </div>
                         {% endif %}
                         <div class="col-12 mt-3">
