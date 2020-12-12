@@ -2,16 +2,20 @@
 
 {% block title %}Accueil Administration{% endblock %}
 
-{% block body %}
-<div class="container p-3">
-    <h1>Accueil administration MyClick&Collect</h1>
-    <div class="row mt-4 justify-content-center">
-        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
-        <a href="{{ path('admin_listuser') }}" class="text-light align-self-center">Gérer les rôles utilisateurs</a>
-        </div>
-        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
-            <a href="{{ path('admin_listcategories') }}" class="text-light">Gérer les catégories</a>
+{% block sidebar %}
+    <h3 class="text-white">Selectionnez une action:</h3>
+    <div class="row">
+        <div class="col">
+            <a href="{{ path('admin_listuser') }}" class="btn btn-primary btn-block my-3">Gérer les rôles utilisateurs</a>
         </div>
     </div>
-</div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{ path('admin_listcategories') }}" class="btn btn-primary btn-block mb-3">Gérer les catégories</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <h1 class="mt-4">Accueil administration MyClick&Collect</h1>      
 {% endblock %}

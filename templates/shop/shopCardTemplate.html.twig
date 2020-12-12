@@ -37,14 +37,17 @@
                 
                 <div class="card-body align-items-end text-white">
                     <div class="row">
-                        <div class="col">
-                            <a href="#" class="btn btn-dark btn-block">Entrer</a> 
+                        {% if (controller_name is defined and controller_name == 'ShopAdmin') %}
+                        <div class="col-6">
+                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Modifier</a> 
                         </div>
-                        {% if (controller_name is defined and controller_name == 'ShopController') %}
-                        <div class="col">
-                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Editer</a> 
+                        <div class="col-6">
+                            <a href="#" class="btn btn-dark btn-block">Gérer</a> 
                         </div>
                         {% endif %}
+                        <div class="col-12 mt-3">
+                            <a href="#" class="btn btn-dark btn-block">Entrer dans la boutique</a> 
+                        </div>
                     </div>
                 </div>  
             </div>

@@ -30,7 +30,7 @@ class ShopController extends AbstractController
             9
         );
         return $this->render('shop/index.html.twig', [
-            'controller_name' => 'ShopController',
+            'controller_name' => 'ShopAdmin',
             'current_menu' => 'shop',
             'current_user' => $this->getUser(),
             'shopList' => $shopList,
@@ -80,7 +80,7 @@ class ShopController extends AbstractController
             return $this->redirectToRoute('shop_admin');
         }
         return $this->render('shop/addshop.html.twig', [
-            'controller_name' => 'ShopController',
+            'controller_name' => 'ShopAdmin',
             'current_menu' => $current_menu,
             'current_user' => $this->getUser(),
             'formNewShop' => $formShop->createView()

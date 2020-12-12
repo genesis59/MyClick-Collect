@@ -2,17 +2,22 @@
 
 {% block title %}Liste des utilisateurs{% endblock %}
 
-{% block body %}
-<div class="container">
-    <h1 class="mt-3">Liste des utilisateurs MyClick&Collect</h1>
-    <div class="row mt-4 justify-content-center">
-        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
-        <a href="{{  path('admin_home') }}" class="text-light align-self-center">Retour à l'accueil de l'administration</a>
-        </div>
-        <div class="btn btn-primary btn-lg col-md-5 mx-3 my-3">
-            <a href="{{ path('admin_listcategories') }}" class="text-light">Gérer les catégories</a>
+{% block sidebar %}
+    <h3 class="text-white">Selectionnez une action:</h3>
+    <div class="row">
+        <div class="col">
+            <a href="{{  path('admin_home') }}" class="btn btn-primary btn-block my-3">Retour à l'accueil de l'administration</a>
         </div>
     </div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{ path('admin_listcategories') }}" class="btn btn-primary btn-block mb-3">Gérer les catégories</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <h1 class="mt-4">Accueil administration MyClick&Collect</h1>  
     <h2>Rechercher un utilisateur :</h2><p></p>
     {{ form_start(formSearch)}}
     <div class="row mt-4">
@@ -78,10 +83,9 @@
             </tbody>
         </table>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-3">
         {{ knp_pagination_render(users) }}
     </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
