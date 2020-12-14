@@ -1,0 +1,20 @@
+<!-- products must be defined in the controller then loop to get product -->
+<div class="row border-top border-info p-3 product">
+    <div class="col-12 col-md-3">
+        <img class="w-100" src="{{ asset('images/' ~ item.picture )}}" alt="photo du produit">
+    </div>
+    <div class="col-12 col-md-6">
+        <h5 class="card-title">{{ item.title }}</h5>
+        <p class="card-text">{{ item.designation }} </p>
+    </div>
+    <div class="col-12 col-md-3">
+        <p>{{ item.price }} €</p>
+        {% if item.stock > 0 %}
+            <p class="text-success">en stock</p>
+        {% else %}
+            <p class="text-danger">en rupture</p>    
+        {% endif %}
+        <a href="#" class="btn btn-primary">Ajouter au panier</a>     
+    </div>  
+</div>
+

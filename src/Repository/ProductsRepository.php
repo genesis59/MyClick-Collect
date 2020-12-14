@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Products;
+use App\Entity\Shops;
+use App\Entity\ShopSubCategories;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,17 @@ class ProductsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Products::class);
+    }
+
+    public function getProductsByShopBySubCat(Shops $shop,ShopSubCategories $subCat){
+        return $this->createQueryBuilder('p')
+            ->where('p.shop = :shop')
+            ->andWhere('p.subCategory = :subcat')
+            ->setParameter('shop', $shop)
+            ->setParameter('subcat', $subCat)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

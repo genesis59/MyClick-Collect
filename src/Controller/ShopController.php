@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Shops;
 use App\Form\ShopType;
+use App\Repository\ProductsRepository;
 use App\Repository\ShopsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -18,15 +19,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class ShopController extends AbstractController
 {
     /**
-     * SHOP HOME
+     * shops admin home
      * @Route("/admin", name="admin")
      */
-    public function index(Request $request ,ShopsRepository $shopsRepository, PaginatorInterface $paginator): Response
+    public function index(Request $request, ShopsRepository $shopsRepository, PaginatorInterface $paginator): Response
     {
         $shops = $shopsRepository->findShopByUser($this->getUser());
         $shopList = $paginator->paginate(
             $shops,
-            $request->query->getInt('page',1),
+            $request->query->getInt('page', 1),
             9
         );
         return $this->render('shop/index.html.twig', [
@@ -39,7 +40,7 @@ class ShopController extends AbstractController
     }
 
     /**
-     * CREATE NEW OR EDIT SHOP 
+     * create or edit shop
      * @Route("/new-shop", name="new-shop")
      * @Route("/edit-shop/{id}", name="edit-shop")
      *
@@ -56,7 +57,6 @@ class ShopController extends AbstractController
             $current_menu = 'new-shop';
         } else {
             $current_menu = 'edit-shop';
-
         }
         $formShop = $this->createForm(ShopType::class, $shop);
         $formShop->handleRequest($request);
@@ -65,7 +65,7 @@ class ShopController extends AbstractController
             if ($file = $formShop->get('picture')->getData()) {
                 if ($shop->getPicture()) {
                     $pastPicture = $this->getParameter('upload_directory') . '/' . $shop->getPicture();
-                    if(file_exists($pastPicture)){
+                    if (file_exists($pastPicture)) {
                         unlink($pastPicture);
                     }
                 }
@@ -88,23 +88,49 @@ class ShopController extends AbstractController
     }
 
     /**
-     * 
+     * shop manager
      * @Route("/manage/{id}",name="manage-shop")
      *
+     * @param Request $request
+     * @param PaginatorInterface $paginator
+     * @param ProductsRepository $productRepo
+     * @param Shops $shop
      * @return void
      */
-    public function manageShop(Shops $shop){
+    public function manageShop(Request $request, PaginatorInterface $paginator, ProductsRepository $productRepo, Shops $shop)
+    {
 
         $subCategories = $shop->getShopSubCategories();
-        $products = $shop->getProducts();
-        
+        $nbSubCat = count($subCategories);
+
+        // pagination of products by category
+        $productsBySubCatList = [];
+        foreach ($subCategories as $subCategory) {
+            $productsBySubCat = $productRepo->getProductsByShopBySubCat($shop, $subCategory);
+            $pagination = $paginator->paginate(
+                $productsBySubCat,
+                $request->query->getInt('page', 1),
+                2,
+            );
+            array_push($productsBySubCatList, $pagination);
+        }
+        // pagination by category of previous pagination
+        $paginationCat = $paginator->paginate(
+            $productsBySubCatList,
+            $request->query->getInt('cat', 1),
+            1,
+            ['pageParameterName' => 'cat']
+        );
+
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'manageshop',
             'current_user' => $this->getUser(),
             'current_shop' => $shop,
             'sub_categories' => $subCategories,
-            'products' => $products
+            'nbSubCat' => $nbSubCat,
+            'products' => $paginationCat,
+            'test' => $subCategories
         ]);
     }
 }
