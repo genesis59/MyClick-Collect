@@ -102,25 +102,34 @@ class ShopController extends AbstractController
 
         $subCategories = $shop->getShopSubCategories();
         $nbSubCat = count($subCategories);
-
-        // pagination of products by category
-        $productsBySubCatList = [];
-        foreach ($subCategories as $subCategory) {
-            $productsBySubCat = $productRepo->getProductsByShopBySubCat($shop, $subCategory);
-            $pagination = $paginator->paginate(
-                $productsBySubCat,
-                $request->query->getInt('page', 1),
-                2,
+        // if there are not subCategories 
+        if($nbSubCat == 0){
+            $products = $paginator->paginate(
+                $productRepo->findBy(['shop' => $shop]),
+                $request->query->getInt('page',1),
+                1
+            );   
+        } else {
+            // pagination of products by category
+            $productsBySubCatList = [];
+            foreach ($subCategories as $subCategory) {
+                $productsBySubCat = $productRepo->getProductsByShopBySubCat($shop, $subCategory);
+                $pagination = $paginator->paginate(
+                    $productsBySubCat,
+                    $request->query->getInt('page', 1),
+                    2,
+                );
+                array_push($productsBySubCatList, $pagination);
+            }
+            // pagination by category of previous pagination
+            $products = $paginator->paginate(
+                $productsBySubCatList,
+                $request->query->getInt('cat', 1),
+                1,
+                ['pageParameterName' => 'cat']
             );
-            array_push($productsBySubCatList, $pagination);
         }
-        // pagination by category of previous pagination
-        $paginationCat = $paginator->paginate(
-            $productsBySubCatList,
-            $request->query->getInt('cat', 1),
-            1,
-            ['pageParameterName' => 'cat']
-        );
+        
 
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
@@ -129,8 +138,7 @@ class ShopController extends AbstractController
             'current_shop' => $shop,
             'sub_categories' => $subCategories,
             'nbSubCat' => $nbSubCat,
-            'products' => $paginationCat,
-            'test' => $subCategories
+            'products' => $products
         ]);
     }
 }

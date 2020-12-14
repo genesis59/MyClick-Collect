@@ -1,27 +1,44 @@
 <!-- nbSubCat,products and sub_categories must be defined in the controller -->
 
 <div class="card text-center mt-3">
-    <div class="card-header">
+    <div class="card-header">   
         <ul class="nav nav-tabs card-header-tabs">
-            {% set i = 1 %} 
-            {% for subcat in sub_categories %}
-                <li class="nav-item">
-                    <a class="nav-link text-dark cat{{i}}" href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}?cat={{i}} ">{{subcat.namesubcategory}}</a>
-                </li>
-            {% set i = i + 1 %}
-            {% endfor %}
+            {% if nbSubCat == 0 %}
+            <li class="nav-item">
+                <a class="nav-link">Liste des produits disponibles</a>
+            </li>
+            {% else %}
+                {% set i = 1 %} 
+                {% for subcat in sub_categories %}
+                    <li class="nav-item">
+                        <a class="nav-link text-dark cat{{i}}" href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}?cat={{i}} ">{{subcat.namesubcategory}}</a>
+                    </li>
+                {% set i = i + 1 %}
+                {% endfor %}
+            {% endif %}
         </ul>
     </div>
-    {% for productlist in products %} 
-        {% for item in productlist %}  
+    {% if nbSubCat == 0 %}
+        {% for item in products %}     
             <div class="card-body">
                 {% include 'product/layout/productPresentation.html.twig' %}
-            </div>  
+            </div>          
+            <div class="row justify-content-center mt-3">
+                {{ knp_pagination_render(products) }}
+            </div>
         {% endfor %}
-        <div class="row justify-content-center mt-3">
-            {{ knp_pagination_render(productlist) }}
-        </div>
-    {% endfor %} 
+    {% else %}      
+        {% for productlist in products %} 
+            {% for item in productlist %}  
+                <div class="card-body">
+                    {% include 'product/layout/productPresentation.html.twig' %}
+                </div>  
+            {% endfor %}
+            <div class="row justify-content-center mt-3">
+                {{ knp_pagination_render(productlist) }}
+            </div>
+        {% endfor %} 
+    {% endif %}
 </div>
 
 <script
