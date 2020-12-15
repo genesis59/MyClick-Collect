@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Shops;
+use App\Entity\ShopSubCategories;
 use App\Form\ShopType;
 use App\Repository\ProductsRepository;
 use App\Repository\ShopsRepository;
@@ -69,7 +70,6 @@ class ShopController extends AbstractController
                         unlink($pastPicture);
                     }
                 }
-
                 $file = $formShop->get('picture')->getData();
                 $fileName = md5(uniqid()) . '.' . $file->guessExtension();
                 $file->move($this->getParameter('upload_directory'), $fileName);
@@ -100,37 +100,33 @@ class ShopController extends AbstractController
     public function manageShop(Request $request, PaginatorInterface $paginator, ProductsRepository $productRepo, Shops $shop)
     {
 
+
         $subCategories = $shop->getShopSubCategories();
         $nbSubCat = count($subCategories);
-        // if there are not subCategories 
-        if($nbSubCat == 0){
-            $products = $paginator->paginate(
-                $productRepo->findBy(['shop' => $shop]),
-                $request->query->getInt('page',1),
-                1
-            );   
+        // by default we consider that if there is at least one subcategory all the products have one
+        $categoryNotDefined = null;
+
+        // if there are not subCategories we collect all the products from $shop
+        if ($nbSubCat == 0) {
+            $products = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop), 1);
+
         } else {
+            //we check if there are products without category
+            $catNotDefined = $productRepo->getProductsByShopBySubCat($shop);
             // pagination of products by category
             $productsBySubCatList = [];
             foreach ($subCategories as $subCategory) {
-                $productsBySubCat = $productRepo->getProductsByShopBySubCat($shop, $subCategory);
-                $pagination = $paginator->paginate(
-                    $productsBySubCat,
-                    $request->query->getInt('page', 1),
-                    2,
-                );
+                $pagination = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop, $subCategory), 1);
                 array_push($productsBySubCatList, $pagination);
             }
-            // pagination by category of previous pagination
-            $products = $paginator->paginate(
-                $productsBySubCatList,
-                $request->query->getInt('cat', 1),
-                1,
-                ['pageParameterName' => 'cat']
-            );
+            // if product without category
+            if ($categoryNotDefined) {
+                $pagination = $this->pagination($paginator, $request, $catNotDefined, 1);
+                array_push($productsBySubCatList, $pagination);
+            }
+            // pagination by category of previous pagination products
+            $products = $this->pagination($paginator, $request, $productsBySubCatList, 1, 'cat');
         }
-        
-
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'manageshop',
@@ -138,7 +134,26 @@ class ShopController extends AbstractController
             'current_shop' => $shop,
             'sub_categories' => $subCategories,
             'nbSubCat' => $nbSubCat,
-            'products' => $products
+            'products' => $products,
+            'not_cat_products' => $categoryNotDefined
         ]);
+    }
+
+    public function pagination(PaginatorInterface $paginator, Request $request, $listToPaginate, Int $nbElementByPage = 5, String $newValueGet = null)
+    {
+        if ($newValueGet) {
+            return $paginator->paginate(
+                $listToPaginate,
+                $request->query->getInt($newValueGet, 1),
+                $nbElementByPage,
+                ['pageParameterName' => $newValueGet]
+            );
+        } else {
+            return $paginator->paginate(
+                $listToPaginate,
+                $request->query->getInt('page', 1),
+                $nbElementByPage,
+            );
+        }
     }
 }

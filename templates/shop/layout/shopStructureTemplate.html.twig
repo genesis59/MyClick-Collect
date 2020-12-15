@@ -5,7 +5,7 @@
         <ul class="nav nav-tabs card-header-tabs">
             {% if nbSubCat == 0 %}
             <li class="nav-item">
-                <a class="nav-link">Liste des produits disponibles</a>
+                <a class="nav-link text-dark">Liste des produits disponibles</a>
             </li>
             {% else %}
                 {% set i = 1 %} 
@@ -15,6 +15,11 @@
                     </li>
                 {% set i = i + 1 %}
                 {% endfor %}
+                {% if not_cat_products %}
+                    <li class="nav-item">
+                        <a class="nav-link text-dark cat{{i}}" href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}?cat={{i}} ">autres</a>
+                    </li>
+                {% endif %}
             {% endif %}
         </ul>
     </div>

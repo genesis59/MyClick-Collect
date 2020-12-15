@@ -64,7 +64,7 @@ class HomeController extends AbstractController
         // recupération de la liste des magasins
         $shopList = $shopsRepository->findAll();
         // récupération de 12 clés aléatoire des données de $shopList
-        $tabRandomShopList = array_rand($shopList, 3);
+        $tabRandomShopList = array_rand($shopList, 6);
         // Initialisation d'un tableau pour récupérer les objets Shops
         $shopRandomList = [];
         foreach ($tabRandomShopList as $idRandom) {

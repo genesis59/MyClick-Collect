@@ -21,7 +21,15 @@ class ProductsRepository extends ServiceEntityRepository
         parent::__construct($registry, Products::class);
     }
 
-    public function getProductsByShopBySubCat(Shops $shop,ShopSubCategories $subCat){
+    public function getProductsByShopBySubCat(Shops $shop,ShopSubCategories $subCat = null){
+        if(!$subCat){
+            return $this->createQueryBuilder('p')
+                        ->where('p.shop = :shop')
+                        ->andwhere('p.subCategory IS NULL')
+                        ->setParameter('shop', $shop)
+                        ->getQuery()
+                        ->getResult();
+        }
         return $this->createQueryBuilder('p')
             ->where('p.shop = :shop')
             ->andWhere('p.subCategory = :subcat')
