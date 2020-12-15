@@ -112,7 +112,7 @@ class ShopController extends AbstractController
 
         } else {
             //we check if there are products without category
-            $catNotDefined = $productRepo->getProductsByShopBySubCat($shop);
+            $categoryNotDefined = $productRepo->getProductsByShopBySubCat($shop);
             // pagination of products by category
             $productsBySubCatList = [];
             foreach ($subCategories as $subCategory) {
@@ -121,7 +121,7 @@ class ShopController extends AbstractController
             }
             // if product without category
             if ($categoryNotDefined) {
-                $pagination = $this->pagination($paginator, $request, $catNotDefined, 1);
+                $pagination = $this->pagination($paginator, $request, $categoryNotDefined, 1);
                 array_push($productsBySubCatList, $pagination);
             }
             // pagination by category of previous pagination products
