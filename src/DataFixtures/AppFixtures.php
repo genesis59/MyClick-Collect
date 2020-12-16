@@ -4,9 +4,11 @@ namespace App\DataFixtures;
 
 use App\Entity\Addresses;
 use App\Entity\Departments;
+use App\Entity\Products;
 use App\Entity\Regions;
 use App\Entity\ShopCategories;
 use App\Entity\Shops;
+use App\Entity\ShopSubCategories;
 use App\Entity\Towns;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -39,6 +41,7 @@ class AppFixtures extends Fixture
         $tabUsers = [];
         $tabTraders = [];
         $tabCategoriesObject = [];
+        $tabShop = [];
         //  Création des régions avant insertion dans la base de données
         foreach ($listRegions as $item) {
             $region = new Regions();
@@ -83,7 +86,7 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
         // Création de quelques utilisateurs
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $user = new User();
             $user->setFirstName($faker->firstName(null))
                 ->setLastName($faker->lastName)
@@ -100,13 +103,13 @@ class AppFixtures extends Fixture
         }
 
         // Création de quelques commerçants
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $trader = new User();
             $trader->setFirstName($faker->firstName(null))
                 ->setLastName($faker->lastName)
                 ->setPhoneNumber($faker->phoneNumber)
                 ->setEmail($faker->email)
-                ->setRoles(['ROLE_USER','ROLE_TRADER'])
+                ->setRoles(['ROLE_USER', 'ROLE_TRADER'])
                 ->setPassword($this->userPasswordEncoder->encodePassword($trader, 'root'))
                 ->setTown($faker->randomElement($tabTown))
                 ->setStreetNumber($faker->buildingNumber)
@@ -125,25 +128,81 @@ class AppFixtures extends Fixture
             array_push($tabCategoriesObject, $category);
             $manager->persist($category);
         }
-        // Création de magasin 3/trader pour 50 trader
-        for($i = 0; $i <50; $i++){
+        // Création de magasin 
+        for ($i = 0; $i < 4; $i++) {
             $user = $faker->randomElement($tabTraders);
-            for($j = 1; $j <=3; $j++){
+            for ($j = 1; $j <= 3; $j++) {
                 $shop = new Shops();
                 $shop->setNameShop($faker->company)
                     ->setTrader($user)
                     ->setCategory($faker->randomElement($tabCategoriesObject))
                     ->setTown($faker->randomElement($tabTown))
                     ->setPicture($j . '.jpg')
-                    ->setPresentation($faker->paragraph(3,true))
+                    ->setPresentation($faker->paragraph(3, true))
                     ->setStreetNumber($faker->buildingNumber)
                     ->setStreet($faker->streetName)
                     ->setEmail($faker->email)
                     ->setPhoneNumber($faker->phoneNumber);
-                
+                // Ajout des magasins au tableau
+                array_push($tabShop, $shop);
                 $manager->persist($shop);
             }
         }
+        $tabSubCategories = ['xbox', 'ps5', 'switch'];
+        $m = 0;
+        foreach ($tabShop as $shop) {
+            // creétion d'un magasins sans sous catégorie
+            if ($m == 0) {
+                // création de produits sans categorie
+                for ($n = 1; $n <= 10; $n++) {
+                    $product = new Products();
+                    $product->setTitle($faker->word())
+                        ->setShop($shop)
+                        ->setSubCategory(null)
+                        ->setStock($faker->randomDigit())
+                        ->setDesignation($faker->paragraph(2, true))
+                        ->setPicture('24.jpg')
+                        ->setPrice($faker->randomDigit());
+                    $manager->persist($product);
+                }
+                $m++;
+            } else {
+                $l = 1;
+                // création de sous catégorie pour les magasins
+                foreach ($tabSubCategories as $subCategory) {
+                    $newSubCat = new ShopSubCategories();
+                    $newSubCat->setNameSubCategory($subCategory)
+                        ->setShop($shop);
+                    $manager->persist($newSubCat);
+                    // création de produits pour chaque categorie
+                    for ($k = 1; $k <= 10; $k++) {
+                        $product = new Products();
+                        $product->setTitle($faker->word())
+                            ->setShop($shop)
+                            ->setSubCategory($newSubCat)
+                            ->setStock($faker->randomDigit())
+                            ->setDesignation($faker->paragraph(2, true))
+                            ->setPicture('2' . $l . '.jpg')
+                            ->setPrice($faker->randomDigit());
+                        $manager->persist($product);
+                    }
+                    $l++;
+                }
+                // création de produits sans categorie
+                for ($k = 1; $k <= 10; $k++) {
+                    $product = new Products();
+                    $product->setTitle($faker->word())
+                        ->setShop($shop)
+                        ->setSubCategory(null)
+                        ->setStock($faker->randomDigit())
+                        ->setDesignation($faker->paragraph(2, true))
+                        ->setPicture('24.jpg')
+                        ->setPrice($faker->randomDigit());
+                    $manager->persist($product);
+                }
+            }
+        }
+
         $manager->flush();
     }
 }

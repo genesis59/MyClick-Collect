@@ -1,0 +1,53 @@
+{% block title %}Gestion des catégories{% endblock %}
+
+{% block sidebar %}
+    <h3 class="text-white">Selectionnez une action:</h3>
+    <div class="row">
+        <div class="col">
+            <a href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}" class="btn btn-primary btn-block my-3">Retour au magasin</a>
+        </div>
+    </div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{  path('shop_admin') }}" class="btn btn-primary btn-block mb-3">Retour à l'accueil de l'administration</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% extends 'base.html.twig' %}
+
+{% block main %}
+<h1 class="mt-4">Gestion des sous catégories</h1>
+<div class="row">
+    <div class="col-md-7">
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Liste des catégories</th>
+                    <th scope="col" colspan="2">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for subcategory in subCategories %}
+                        <tr>
+                            <td>{{ subcategory.nameSubCategory }}</td> 
+                            <td><a href="{{ path('shop_edit-sub-category',{'id': subcategory.id}) }}" class="btn btn-warning text-white">Modifier</a></td>
+                            <td><a href="{{ path('shop_delete-sub-category',{'id': subcategory.id}) }}" class="btn btn-danger">Supprimer</a></td>
+                        </tr>
+                    {% endfor %}     
+                </tbody>
+            </table>
+        </div>  
+    </div>
+    <div class="col-md-4">
+        <h3>Ajouter une catégorie</h3>
+        <div class="mt-3">
+            {{ form_start(form_sub_category) }}
+            {{ form_row(form_sub_category.nameSubCategory) }}
+            <button class="btn btn-primary">Ajouter</button>
+            {{ form_end(form_sub_category) }}
+        </div>
+    </div>
+</div>      
+{% endblock %}

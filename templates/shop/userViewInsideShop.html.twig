@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block main %}
+    <h1 class="mt-4">Bienvenue chez {{ current_shop.nameShop }}</h1> 
+    {% include 'shop/layout/shopStructureTemplate.html.twig' %}
+{% endblock %}

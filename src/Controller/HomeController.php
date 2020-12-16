@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Shops;
 use App\Entity\Towns;
 use App\Entity\TownSearch;
 use App\Form\TownSearchType;
+use App\Repository\ProductsRepository;
 use App\Repository\ShopCategoriesRepository;
 use App\Repository\ShopsRepository;
 use App\Repository\TownsRepository;
@@ -54,7 +56,75 @@ class HomeController extends AbstractController
     }
 
     /**
-     * recherche une liste de 12 magasins aléatoirement
+     * 
+     * login or not login enter in to the shop
+     *@Route("/consult-shop/{id}", name="enter-shop")
+     * 
+     * @return void
+     */
+    public function userInsideShop(Request $request, PaginatorInterface $paginator, ProductsRepository $productRepo, Shops $shop){
+        $subCategories = $shop->getShopSubCategories();
+        $nbSubCat = count($subCategories);
+        // by default we consider that if there is at least one subcategory all the products have one
+        $categoryNotDefined = null;
+
+        // if there are not subCategories we collect all the products from $shop
+        if ($nbSubCat == 0) {
+            $products = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop), 5);
+
+        } else {
+            //we check if there are products without category
+            $categoryNotDefined = $productRepo->getProductsByShopBySubCat($shop);
+            // pagination of products by category
+            $productsBySubCatList = [];
+            foreach ($subCategories as $subCategory) {
+                $pagination = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop, $subCategory), 5);
+                array_push($productsBySubCatList, $pagination);
+            }
+            // if product without category
+            if ($categoryNotDefined) {
+                $pagination = $this->pagination($paginator, $request, $categoryNotDefined, 5);
+                array_push($productsBySubCatList, $pagination);
+            }
+            // pagination by category of previous pagination products
+            $products = $this->pagination($paginator, $request, $productsBySubCatList, 1, 'cat');
+        }
+        return $this->render('shop/userViewInsideShop.html.twig', [
+            'controller_name' => 'home',
+            'current_menu' => 'userInsideShop',
+            'current_shop' => $shop,
+            'sub_categories' => $subCategories,
+            'nbSubCat' => $nbSubCat,
+            'products' => $products,
+            'not_cat_products' => $categoryNotDefined
+        ]);
+    }
+
+
+    /**
+     * dans l Attente de création d un service
+     *
+     */
+    public function pagination(PaginatorInterface $paginator, Request $request, $listToPaginate, Int $nbElementByPage = 5, String $newValueGet = null)
+    {
+        if ($newValueGet) {
+            return $paginator->paginate(
+                $listToPaginate,
+                $request->query->getInt($newValueGet, 1),
+                $nbElementByPage,
+                ['pageParameterName' => $newValueGet]
+            );
+        } else {
+            return $paginator->paginate(
+                $listToPaginate,
+                $request->query->getInt('page', 1),
+                $nbElementByPage,
+            );
+        }
+    }
+
+    /**
+     * recherche une liste de 6 magasins aléatoirement
      *
      * @param ShopsRepository $shopsRepository
      * @return void
@@ -92,7 +162,7 @@ class HomeController extends AbstractController
     {
         $tabShopList = [];
         $shopList = [];
-        // on récupére les id de la ville si elle a plusieurs code postal
+        // on récupère les id de la ville si elle a plusieurs code postal
         $towns = $townsRepository->getTownBySearch($search);
         // on récupére les magasins si il existe par code postal
         foreach ($towns as $town) {
@@ -116,4 +186,5 @@ class HomeController extends AbstractController
         return $shopListPaginate;
         
     }
+
 }

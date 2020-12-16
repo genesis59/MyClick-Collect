@@ -4,11 +4,29 @@
 
 {% block sidebar %}
     <h3 class="text-white">Selectionnez une action:</h3>
+
     <div class="row">
         <div class="col">
-            <a href="{{ path('shop_new-shop')}}" class="btn btn-primary btn-block my-3">Créer un commerce</a>
+            <div class="dropdown">
+                <a role="button" class="btn btn-primary btn-block my-3 dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Gérer un commerce
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <h5 class="dropdown-item">liste des magasins : </h5>
+                    {% for shop in shopList %}
+                        <a href="{{ path('shop_manage-shop',{'id':shop.id}) }}" class="dropdown-item" type="button">{{ shop.nameShop }}</a>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <a href="{{ path('shop_new-shop')}}" class="btn btn-primary btn-block mb-3">Créer un commerce</a>
+        </div>
+    </div>
+    
     <div class="row border-bottom border-info">
         <div class="col">
             <div class="dropdown">
@@ -16,6 +34,7 @@
                 Editer un commerce
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <h5 class="dropdown-item">liste des magasins : </h5>
                     {% for shop in shopList %}
                         <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="dropdown-item" type="button">{{ shop.nameShop }}</a>
                     {% endfor %}

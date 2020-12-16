@@ -5,44 +5,67 @@
         <ul class="nav nav-tabs card-header-tabs">
             {% if nbSubCat == 0 %}
             <li class="nav-item">
-                <a class="nav-link text-dark">Liste des produits disponibles</a>
+                <a class="nav-link text-dark text-uppercase">Liste des produits disponibles</a>
             </li>
             {% else %}
                 {% set i = 1 %} 
                 {% for subcat in sub_categories %}
                     <li class="nav-item">
-                        <a class="nav-link text-dark cat{{i}}" href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}?cat={{i}} ">{{subcat.namesubcategory}}</a>
+                        <a class="nav-link text-dark cat{{i}} text-uppercase" href="{{ controller_name == 'ShopAdmin' ? path('shop_manage-shop',{'id':current_shop.id}) : path('enter-shop',{'id':current_shop.id}) }}?cat={{i}} ">{{subcat.namesubcategory}}</a>
                     </li>
                 {% set i = i + 1 %}
                 {% endfor %}
                 {% if not_cat_products %}
                     <li class="nav-item">
-                        <a class="nav-link text-dark cat{{i}}" href="{{ path('shop_manage-shop',{'id':current_shop.id}) }}?cat={{i}} ">autres</a>
+                        <a class="nav-link text-dark cat{{i}} text-uppercase" href="{{ controller_name == 'ShopAdmin' ? path('shop_manage-shop',{'id':current_shop.id}) : path('enter-shop',{'id':current_shop.id}) }}?cat={{i}} ">autres</a>
                     </li>
                 {% endif %}
             {% endif %}
         </ul>
     </div>
     {% if nbSubCat == 0 %}
-        {% for item in products %}     
+        {% for item in products %}
+            {% if products.items == null %}
+                <div class="row card-body">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-center bg-danger text-white rounded">
+                        <p class="m-4">
+                            Désolé il n'y a aucun produits enregistrer dans cette catégorie. 
+                        </p>
+                    </div>
+                    <div class="col-3"></div>
+                </div>  
+            {% endif %}     
             <div class="card-body">
                 {% include 'product/layout/productPresentation.html.twig' %}
             </div>          
-            <div class="row justify-content-center mt-3">
-                {{ knp_pagination_render(products) }}
-            </div>
         {% endfor %}
-    {% else %}      
+        <div class="row justify-content-center mt-3">
+            {{ knp_pagination_render(products) }}
+        </div>
+    {% else %}   
         {% for productlist in products %} 
-            {% for item in productlist %}  
+            {% if productlist.items == null %}
+            <div class="row card-body">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-center bg-danger text-white rounded">
+                        <p class="m-4">
+                            Désolé il n'y a aucun produits enregistrer dans cette catégorie. 
+                        </p>
+                    </div>
+                    <div class="col-3"></div>
+                </div>  
+            {% endif %}     
+            {% for item in productlist %}
                 <div class="card-body">
                     {% include 'product/layout/productPresentation.html.twig' %}
-                </div>  
+                </div> 
             {% endfor %}
             <div class="row justify-content-center mt-3">
                 {{ knp_pagination_render(productlist) }}
             </div>
-        {% endfor %} 
+        {% endfor %}
+         
     {% endif %}
 </div>
 
