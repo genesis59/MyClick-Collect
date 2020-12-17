@@ -16,6 +16,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
+// ***********************************************************************************************
+// **                                      INDEX                                                **
+// **                                                                                           **
+// **                                CLASS MAIN ROUTE                                           **
+// **                           Route("/admin", name="admin_")                                  **
+// **                                                                                           **
+// **                                  USERS MANAGER                                            **
+// **                         Route("/listuser", name="listuser")                               **
+// **                   Route("/editroleuser/{id}", name="editroleuser")                        **
+// **                                                                                           **
+// **                               CATEGORIES MANAGER                                          **
+// **                 Route("/listcategories", name="listcategories")                           **
+// **                 Route("/editcategory/{id}", name="editcategory")                          **
+// **                Route("/deletecategory/{id}", name="deletecategory")                       **
+// **                                                                                           **
+// ***********************************************************************************************
+
+
+
 /**
  * @Route("/admin", name="admin_")
  */

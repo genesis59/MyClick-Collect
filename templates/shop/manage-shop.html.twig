@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <a href="#" class="btn btn-primary btn-block mb-3">Gérer les produits</a>
+            <a href="{{ path('shop_list-products',{'id' : current_shop.id }) }}" class="btn btn-primary btn-block mb-3">Gérer les produits</a>
         </div>
     </div>
     <div class="row border-bottom border-info">
@@ -20,6 +20,6 @@
 {% endblock %}
 
 {% block main %}
-    <h1 class="mt-4">Gestionnaire du magasin {{ current_shop.nameShop }}</h1> 
+    <h1 class="mt-4">Mon magasin {{ current_shop.nameShop }}</h1> 
     {% include 'shop/layout/shopStructureTemplate.html.twig' %}
 {% endblock %}

@@ -14,7 +14,9 @@
         {% else %}
             <p class="text-danger">en rupture</p>    
         {% endif %}
-        <a href="#" class="btn btn-primary">Ajouter au panier</a>     
+        {% if controller_name == 'home' %}
+        <a href="#" class="btn btn-primary">Ajouter au panier</a>
+        {% endif %}     
     </div>  
 </div>
 

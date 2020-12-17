@@ -6,8 +6,8 @@ use App\Entity\Shops;
 use App\Entity\ShopSubCategories;
 use App\Form\ShopSubCategoriesType;
 use App\Form\ShopType;
-use App\Repository\ProductsRepository;
 use App\Repository\ShopsRepository;
+use App\Service\ToolsShopService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,11 +15,40 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+// ***********************************************************************************************
+// **                                      INDEX                                                **
+// **                                                                                           **
+// **                                CLASS MAIN ROUTE                                           **
+// **                            Route("/shop", name="shop_")                                   **
+// **                                HOME SHOPS MANAGER                                         **
+// **                           Route("/admin", name="admin")                                   **
+// **                                                                                           **
+// **                                  SHOPS MANAGER                                            **
+// **    Route("/new-shop", name="new-shop") and Route("/edit-shop/{id}", name="edit-shop")     **
+// **                       Route("/manage/{id}",name="manage-shop")                            **
+// **                                                                                           **
+// **                                 PRODUCTS MANAGER                                          **
+// **                 Route("/manage/products/{id}",name = "list-products")                     **
+// **                                                                                           **
+// **                              SUBCATEGORIES MANAGER                                        **
+// **           Route("/manage/sub-categories/{id}",name = "list-sub-categories")               **
+// **           Route("/manage/sub-categories/edit/{id}",name = "edit-sub-category")            **
+// **         Route("/manage/sub-categories/delete/{id}",name = "delete-sub-category")          **
+// **                                                                                           **
+// ***********************************************************************************************
+
 /**
  * @Route("/shop", name="shop_")
  */
 class ShopController extends AbstractController
 {
+
+
+    // *****************************
+    // **    HOME SHOPS MANAGER   **
+    // *****************************
+
+
     /**
      * shops admin home
      * @Route("/admin", name="admin")
@@ -40,6 +69,12 @@ class ShopController extends AbstractController
             'message' => false
         ]);
     }
+
+
+    // *****************************
+    // **     SHOPS MANAGER       **
+    // *****************************
+
 
     /**
      * create or edit shop
@@ -87,60 +122,62 @@ class ShopController extends AbstractController
         ]);
     }
 
+
     /**
      * shop manager
      * @Route("/manage/{id}",name="manage-shop")
      *
-     * @param Request $request
-     * @param PaginatorInterface $paginator
-     * @param ProductsRepository $productRepo
+     * @param ToolsShopService $shopService
      * @param Shops $shop
      * @return void
      */
-    public function manageShop(Request $request, PaginatorInterface $paginator, ProductsRepository $productRepo, Shops $shop)
+    public function manageShop(ToolsShopService $shopService, Shops $shop)
     {
 
-
-        $subCategories = $shop->getShopSubCategories();
-        $nbSubCat = count($subCategories);
-        // by default we consider that if there is at least one subcategory all the products have one
-        $categoryNotDefined = null;
-
-        // if there are not subCategories we collect all the products from $shop
-        if ($nbSubCat == 0) {
-            $products = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop), 5);
-            dump($products);
-        } else {
-            //we check if there are products without category
-            $categoryNotDefined = $productRepo->getProductsByShopBySubCat($shop);
-            // pagination of products by category
-            $productsBySubCatList = [];
-            foreach ($subCategories as $subCategory) {
-                $pagination = $this->pagination($paginator, $request, $productRepo->getProductsByShopBySubCat($shop, $subCategory), 5);
-                array_push($productsBySubCatList, $pagination);
-            }
-            // if product without category
-            if ($categoryNotDefined) {
-                $pagination = $this->pagination($paginator, $request, $categoryNotDefined, 5);
-                array_push($productsBySubCatList, $pagination);
-            }
-            // pagination by category of previous pagination products
-            $products = $this->pagination($paginator, $request, $productsBySubCatList, 1, 'cat');
-        }
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'manageshop',
             'current_user' => $this->getUser(),
-            'current_shop' => $shop,
-            'sub_categories' => $subCategories,
-            'nbSubCat' => $nbSubCat,
-            'products' => $products,
-            'not_cat_products' => $categoryNotDefined
+            'current_shop' => $shopService->getCurrentShop(),
+            'sub_categories' => $shopService->getSubCategories(),
+            'nbSubCat' => $shopService->getNumberOfCategories(),
+            'products' => $shopService->createPaginationList(),
+            'products_without_cat' => $shopService->productWithoutSubCategory()
         ]);
     }
 
-    /*********************************** SUBCATEGORIES MANAGER ****************************/
 
+
+    // *****************************
+    // **    PRODUCTS MANAGER     **
+    // *****************************
+
+
+    /**
+     * list and manage products
+     * @Route("/manage/products/{id}",name = "list-products")
+     *
+     * @param ToolsShopService $shopService
+     * @param Shops $shop
+     * @return void
+     */
+    public function productsList(ToolsShopService $shopService, Shops $shop)
+    {
+
+        return $this->render('shop/listProducts.html.twig', [
+            'controller_name' => 'ShopAdmin',
+            'current_menu' => 'list-products',
+            'current_shop' => $shopService->getCurrentShop(),
+            'products_list' => $shopService->createPaginationList(),
+            'sub_categories' => $shopService->getSubCategories(),
+            'nbSubCat' => $shopService->getNumberOfCategories(),
+            'products_without_cat' => $shopService->productWithoutSubCategory()
+        ]);
+    }
+
+    // *****************************
+    // **  SUBCATEGORIES MANAGER  **
+    // *****************************
 
     /**
      * list and manage shop sub categories
@@ -183,7 +220,8 @@ class ShopController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function editSubCategory(ShopSubCategories $subCategory,EntityManagerInterface $manager,Request $request){
+    public function editSubCategory(ShopSubCategories $subCategory, EntityManagerInterface $manager, Request $request)
+    {
 
         $form = $this->createForm(ShopSubCategoriesType::class, $subCategory);
         $form->handleRequest($request);
@@ -194,12 +232,11 @@ class ShopController extends AbstractController
             return $this->redirectToRoute('shop_list-sub-categories', ['id' => $subCategory->getShop()->getId()]);
         }
 
-        return $this->render('shop/editSubCategory.html.twig',[
+        return $this->render('shop/editSubCategory.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'list-sub-categories',
             'form_sub_category' => $form->createView()
         ]);
-
     }
 
     /**
@@ -213,32 +250,13 @@ class ShopController extends AbstractController
      */
     public function deleteSubCategoriy(Request $request, ShopSubCategories $subCategory, EntityManagerInterface $manager)
     {
+
         $productsOfThisSubCategory = $subCategory->getProducts();
-        foreach($productsOfThisSubCategory as $product){
+        foreach ($productsOfThisSubCategory as $product) {
             $product->setSubCategory(null);
         }
         $manager->remove($subCategory);
-        
         $manager->flush();
-        return $this->redirectToRoute('shop_list-sub-categories',['id' => $subCategory->getShop()->getId() ]);
-    }
-
-    /*********************************** FONCTIONS ****************************/
-    public function pagination(PaginatorInterface $paginator, Request $request, $listToPaginate, Int $nbElementByPage = 5, String $newValueGet = null)
-    {
-        if ($newValueGet) {
-            return $paginator->paginate(
-                $listToPaginate,
-                $request->query->getInt($newValueGet, 1),
-                $nbElementByPage,
-                ['pageParameterName' => $newValueGet]
-            );
-        } else {
-            return $paginator->paginate(
-                $listToPaginate,
-                $request->query->getInt('page', 1),
-                $nbElementByPage,
-            );
-        }
+        return $this->redirectToRoute('shop_list-sub-categories', ['id' => $subCategory->getShop()->getId()]);
     }
 }

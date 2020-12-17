@@ -15,7 +15,7 @@
                     </li>
                 {% set i = i + 1 %}
                 {% endfor %}
-                {% if not_cat_products %}
+                {% if products_without_cat %}
                     <li class="nav-item">
                         <a class="nav-link text-dark cat{{i}} text-uppercase" href="{{ controller_name == 'ShopAdmin' ? path('shop_manage-shop',{'id':current_shop.id}) : path('enter-shop',{'id':current_shop.id}) }}?cat={{i}} ">autres</a>
                     </li>
