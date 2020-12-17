@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Products;
 use App\Entity\Shops;
 use App\Entity\ShopSubCategories;
+use App\Form\ProductsType;
 use App\Form\ShopSubCategoriesType;
 use App\Form\ShopType;
 use App\Repository\ShopsRepository;
@@ -172,6 +174,46 @@ class ShopController extends AbstractController
             'sub_categories' => $shopService->getSubCategories(),
             'nbSubCat' => $shopService->getNumberOfCategories(),
             'products_without_cat' => $shopService->productWithoutSubCategory()
+        ]);
+    }
+
+    /**
+     * @Route("/manage/products/add/{id}",name = "add-product")
+     * @Route("/manage/products/edit/{shop}/{product}",name = "edit-product")
+     *
+     * @return void
+     */
+    public function addEditProducts(Request $request, EntityManagerInterface $manager, Shops $shop, Products $product = null)
+    {
+        $current_menu = 'edit-product';
+        if (!$product) {
+            $product = new Products();
+            $current_menu = 'new-product';
+        }
+        $form = $this->createForm(ProductsType::class, $product);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product->setShop($shop);
+
+            if ($file = $form->get('picture')->getData()) {
+                if ($product->getPicture()) {
+                    $pastPicture = $this->getParameter('upload_directory') . '/' . $product->getPicture();
+                    if (file_exists($pastPicture)) {
+                        unlink($pastPicture);
+                    }
+                }
+                $file = $form->get('picture')->getData();
+                $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                $file->move($this->getParameter('upload_directory'), $fileName);
+                $product->setPicture($fileName);
+            }
+            $manager->persist($product);
+            $manager->flush();
+        }
+        return $this->render('product/addEditProduct.html.twig', [
+            'current_controller' => 'ShopAdmin',
+            'current_menu' => $current_menu,
+            'formProduct' => $form->createView()
         ]);
     }
 

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if current_menu == 'new-product' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}produit{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<h1>{% if current_menu == 'new-product' %}Ajout d'un nouveau {% else %}Modifier le {% endif %}produit</h1>
+<div class=" border border-dark p-4 mt-4 bg-dark text-white">
+    <h3> Remplissez les champs puis valider.</h3>
+    <div class="container mb-5">
+        {{ form_start(formProduct) }}
+        <div class="row">
+            <div class="col-md-4">{{ form_row(formProduct.title) }}</div>
+            <div class="col-md-4">{{ form_row(formProduct.price) }}</div>
+            <div class="col-md-4">{{ form_row(formProduct.picture) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">{{ form_row(formProduct.subCategory) }}</div>
+            <div class="col-md-6">{{ form_row(formProduct.stock) }}</div>
+        </div>
+        <div class="row">
+            <div class="col">{{ form_row(formProduct.designation) }}</div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div>
+                    {{ form_row(formProduct.create) }}
+                </div>
+                <div class="ml-2">
+                    <a href="#" class="btn btn-danger">Annuler</a>
+                </div>
+            </div>
+        </div>
+        {{ form_end(formProduct) }}
+    </div>
+</div>
+</div> 
+{% endblock %}

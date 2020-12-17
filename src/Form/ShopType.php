@@ -32,7 +32,7 @@ class ShopType extends AbstractType
                 'required' => false,
                 'label' => 'Nom du magasin'
             ])
-            ->add('picture', FileType::class,[
+            ->add('picture', FileType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => 'Image du magasin',
@@ -48,22 +48,22 @@ class ShopType extends AbstractType
                     ])
                 ],
             ])
-            ->add('presentation',TextareaType::class,[
+            ->add('presentation', TextareaType::class, [
                 'label' => 'Présentation',
                 'attr' => [
                     'rows' => 6
                 ]
             ])
-            ->add('email',EmailType::class,[
+            ->add('email', EmailType::class, [
                 'label' => 'Email du magasin'
             ])
-            ->add('phoneNumber',TextType::class,[
+            ->add('phoneNumber', TextType::class, [
                 'label' => 'Numéro de téléphone'
             ])
-            ->add('streetNumber',TextType::class,[
+            ->add('streetNumber', TextType::class, [
                 'label' => 'Numéro de la voie (bis,ter,...)'
             ])
-            ->add('street',TextType::class,[
+            ->add('street', TextType::class, [
                 'label' => 'Rue'
             ])
             ->add('category', EntityType::class, [
@@ -78,7 +78,7 @@ class ShopType extends AbstractType
                 'required' => false,
                 'label' => 'Région'
             ])
-            ->add('create', SubmitType::class,[
+            ->add('create', SubmitType::class, [
                 'label' => 'Valider'
             ]);
 

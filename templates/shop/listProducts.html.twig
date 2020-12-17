@@ -63,7 +63,7 @@
                             <tr>
                                 <th scope="col">picture</th>
                                 <th scope="col">Liste des produits non catégorisé </th>
-                                <th scope="col" colspan="2"><a href="" class="btn btn-primary text-white">Ajouter un produit </a></th>
+                                <th scope="col" colspan="2"><a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary text-white">Ajouter un produit </a></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -71,7 +71,7 @@
                                     <tr>
                                         <td>{{ product.picture }}</td>
                                         <td>{{ product.title }}</td> 
-                                        <td><a href="" class="btn btn-warning text-white">Modifier</a></td>
+                                        <td><a href="{{ path('shop_edit-product',{'id':current_shop.id,'id':product.id})}}" class="btn btn-warning text-white">Modifier</a></td>
                                         <td><a href="" class="btn btn-danger">Supprimer</a></td>
                                     </tr>
                                 {% endfor %}   
@@ -106,7 +106,7 @@
                                 <tr>
                                     <th scope="col">picture</th>
                                     <th scope="col">Liste des produits {{ productsByCat.items[j].subCategory == null ? 'non catégorisé' : 'de la catégorie ' ~ productsByCat.items[i].subCategory.nameSubCategory }} </th>
-                                    <th scope="col" colspan="2"><a href="" class="btn btn-primary text-white">Ajouter un produit </a></th>
+                                    <th scope="col" colspan="2"><a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary text-white">Ajouter un produit </a></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -114,7 +114,7 @@
                                         <tr>
                                             <td>{{ product.picture }}</td>
                                             <td>{{ product.title }}</td> 
-                                            <td><a href="" class="btn btn-warning text-white">Modifier</a></td>
+                                            <td><a href="{{ path('shop_edit-product',{'shop':current_shop.id,'product':product.id})}}" class="btn btn-warning text-white">Modifier</a></td>
                                             <td><a href="" class="btn btn-danger">Supprimer</a></td>
                                         </tr>
                                     {% endfor %}    

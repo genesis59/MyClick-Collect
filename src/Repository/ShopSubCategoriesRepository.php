@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Shops;
 use App\Entity\ShopSubCategories;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,20 @@ class ShopSubCategoriesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShopSubCategories::class);
+    }
+
+    /**
+     * Request for EntityType
+     *
+     * @param Shops $shop
+     * @return void
+     */
+    public function findSubCategoriesByShopForBuilder(Shops $shop)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.shop = :val')
+            ->setParameter('val', $shop)
+        ;
     }
 
     // /**
