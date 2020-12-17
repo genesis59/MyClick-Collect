@@ -105,7 +105,7 @@
                                 <thead class="thead-dark">
                                 <tr>
                                     <th scope="col">picture</th>
-                                    <th scope="col">Liste des produits {{ productsByCat.items[j].subCategory == null ? 'non catégorisé' : 'de la catégorie ' ~ productsByCat.items[i].subCategory.nameSubCategory }} </th>
+                                    <th scope="col">Liste des produits {{ productsByCat.items[j].subCategory == null ? 'non catégorisé' : 'de la catégorie ' ~ productsByCat.items[j].subCategory.nameSubCategory }} </th>
                                     <th scope="col" colspan="2"><a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary text-white">Ajouter un produit </a></th>
                                 </tr>
                                 </thead>

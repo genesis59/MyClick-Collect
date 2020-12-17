@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\Products;
 use App\Entity\ShopSubCategories;
 use App\Repository\ShopSubCategoriesRepository;
-use App\Service\ToolsShopService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -14,16 +13,20 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
 class ProductsType extends AbstractType
 {
-    private $shopService;
 
-    public function __construct(ToolsShopService $shopService )
+    private $request;
+    private $shop;
+
+    public function __construct(RequestStack $request )
     {
-        $this->shopService = $shopService;
+        $this->request = $request->getCurrentRequest();
+        $this->shop = $this->recupCurrentShop();
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -64,7 +67,7 @@ class ProductsType extends AbstractType
                 'placeholder' => 'sans catégorie',
                 'label' => 'Choix de la catégorie',
                 'query_builder' => function(ShopSubCategoriesRepository $er){
-                    return $er->findSubCategoriesByShopForBuilder($this->shopService->getCurrentShop());
+                    return $er->findSubCategoriesByShopForBuilder($this->shop);
                     
                 }
             ])
@@ -72,6 +75,15 @@ class ProductsType extends AbstractType
                 'label' => 'Valider'
             ])
         ;
+    }
+
+    private function recupCurrentShop(){
+        foreach($this->request->attributes as $key => $value){
+            if($key == 'shop'){
+                return $value;
+            }
+            
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
