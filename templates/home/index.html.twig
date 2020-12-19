@@ -4,7 +4,7 @@
 
 {% block sidebar %}
   <div class="text-white">
-    <p>Recherche une ville :</p>
+    <p>Recherche un magasin :</p>
   </div>
   <div class="border-bottom border-info">
     {{ form_start(formSearchTown)}}
@@ -13,6 +13,28 @@
     <button class="btn btn-primary mb-3">Rechercher</button>
     {{ form_end(formSearchTown)}}
   </div>
+  {% if app.user.roles is defined %}
+    <div class="row">
+      <div class="col">
+          <a href="#" class="btn btn-primary btn-block my-3">Consulter mon profil</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+          <a href="#" class="btn btn-primary btn-block mb-3">Commandes en attente</a>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="#" class="btn btn-primary btn-block mb-3">Commandes prêtes</a>
+        </div>
+    </div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{ path('ordered') }}" class="btn btn-primary btn-block mb-3">Consulter mon panier {% if nb_product_in_cart is defined %}({{ nb_product_in_cart }}){% endif %}</a>
+        </div>
+    </div>
+  {% endif %}
   <ul class="mt-4 text-white">
     {% for category in categories %}
       <li>{{ category.nameCategory }}</li>
@@ -21,6 +43,6 @@
 {% endblock %}
 
 {% block main %}
-  <h1 class="mt-4">Bienvenue sur MyClick&Collect !!!</h1>
+  <h1 class="mt-4">Bienvenue sur MyClick&Collect {% if app.user.firstName is defined %}{{ app.user.firstName }}{% endif %} !!!</h1>
   {% include 'shop/layout/shopCardTemplate.html.twig' %}
 {% endblock %}

@@ -1,7 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block sidebar %}
-
+<h3 class="text-white">Selectionnez une action:</h3>
+    {% if app.user.roles is defined %}
+    <div class="row">
+        <div class="col">
+            <a href="#" class="btn btn-primary btn-block my-3">Consulter mon profil</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="#" class="btn btn-primary btn-block mb-3">Commandes en attente</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="#" class="btn btn-primary btn-block mb-3">Commandes prêtes</a>
+        </div>
+    </div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{ path('ordered') }}" class="btn btn-primary btn-block mb-3">Consulter mon panier {% if nb_product_in_cart is defined %}({{ nb_product_in_cart }}){% endif %}</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a href="{{ path('app_login') }}" class="btn btn-primary btn-block my-3">Se connecter</a>
+        </div>
+    </div>   
+    {% endif %}
 {% endblock %}
 
 {% block main %}

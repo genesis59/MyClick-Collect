@@ -74,6 +74,14 @@ class ProductsType extends AbstractType
             ->add('create', SubmitType::class,[
                 'label' => 'Valider'
             ])
+            ->add('redirect_url',TextType::class,[
+            'mapped' => false,
+            'data'=>$this->request->headers->get('referer'),
+            'label' => false,
+            'attr' => [
+                'hidden' => true
+            ]
+            ])
         ;
     }
 

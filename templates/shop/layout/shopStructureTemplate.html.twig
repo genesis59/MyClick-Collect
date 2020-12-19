@@ -3,6 +3,8 @@
 <div class="card text-center mt-3">
     <div class="card-header">   
         <ul class="nav nav-tabs card-header-tabs">
+
+            <!-- card-header product list -->
             {% if nbSubCat == 0 %}
             <li class="nav-item">
                 <a class="nav-link text-dark text-uppercase">Liste des produits disponibles</a>
@@ -23,49 +25,42 @@
             {% endif %}
         </ul>
     </div>
+    <!-- card-body product list -->
+
+    <!-- if there aren't sub category -->
     {% if nbSubCat == 0 %}
-        {% for item in products %}
-            {% if products.items == null %}
-                <div class="row card-body">
-                    <div class="col-3"></div>
-                    <div class="col-6 text-center bg-danger text-white rounded">
-                        <p class="m-4">
-                            Désolé il n'y a aucun produits enregistrer dans cette catégorie. 
-                        </p>
-                    </div>
-                    <div class="col-3"></div>
-                </div>  
-            {% endif %}     
-            <div class="card-body">
-                {% include 'product/layout/productPresentation.html.twig' %}
-            </div>          
-        {% endfor %}
+        <!-- if shop haven't product -->
+        {% if products.items == null %}
+            {% include 'shop/layout/subCategoryWithoutProduct.html.twig' %} 
+        <!-- if shop have at least one product -->
+        {% else %}  
+            <div class="card-body p-1">
+                {% for item in products %}
+                        {% include 'product/layout/productPresentation.html.twig' %}
+                {% endfor %}
+            </div> 
+        {% endif %}         
         <div class="row justify-content-center mt-3">
             {{ knp_pagination_render(products) }}
         </div>
-    {% else %}   
+    {% else %}
+        <!-- if there is at least one sub category -->
         {% for productlist in products %} 
+            <!-- if sub category haven't product -->
             {% if productlist.items == null %}
-            <div class="row card-body">
-                    <div class="col-3"></div>
-                    <div class="col-6 text-center bg-danger text-white rounded">
-                        <p class="m-4">
-                            Désolé il n'y a aucun produits enregistrer dans cette catégorie. 
-                        </p>
-                    </div>
-                    <div class="col-3"></div>
-                </div>  
-            {% endif %}     
+                {% include 'shop/layout/subCategoryWithoutProduct.html.twig' %} 
+            {% else %}  
+            <!-- if there is at least one product in sub category -->
             {% for item in productlist %}
-                <div class="card-body">
+                <div class="card-body p-1">
                     {% include 'product/layout/productPresentation.html.twig' %}
                 </div> 
             {% endfor %}
             <div class="row justify-content-center mt-3">
                 {{ knp_pagination_render(productlist) }}
             </div>
-        {% endfor %}
-         
+            {% endif %}     
+        {% endfor %}      
     {% endif %}
 </div>
 

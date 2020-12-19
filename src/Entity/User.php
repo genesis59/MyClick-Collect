@@ -82,6 +82,11 @@ class User implements UserInterface
      */
     private $town;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
     public function __construct()
     {
         $this->shops = new ArrayCollection();
@@ -325,6 +330,18 @@ class User implements UserInterface
     public function setTown(?Towns $town): self
     {
         $this->town = $town;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

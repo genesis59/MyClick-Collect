@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Ordered;
 use App\Entity\OrderedProducts;
+use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,16 @@ class OrderedProductsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, OrderedProducts::class);
+    }
+
+    public function getOrderedProductByOrderedAndProduct(Products $product,Ordered $ordered){
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.product = :product')
+            ->setParameter('product', $product)
+            ->andWhere('o.ordered = :ordered')
+            ->setParameter('ordered', $ordered)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

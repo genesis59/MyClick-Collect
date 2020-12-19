@@ -133,9 +133,8 @@ class ShopController extends AbstractController
      * @param Shops $shop
      * @return void
      */
-    public function manageShop(ToolsShopService $shopService, Shops $shop)
+    public function manageShop(ToolsShopService $shopService, Shops $shop, Request $request)
     {
-
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'manageshop',
@@ -144,7 +143,7 @@ class ShopController extends AbstractController
             'sub_categories' => $shopService->getSubCategories(),
             'nbSubCat' => $shopService->getNumberOfCategories(),
             'products' => $shopService->createPaginationList(),
-            'products_without_cat' => $shopService->productWithoutSubCategory()
+            'products_without_cat' => $shopService->productWithoutSubCategory(),
         ]);
     }
 
@@ -155,27 +154,6 @@ class ShopController extends AbstractController
     // *****************************
 
 
-    /**
-     * list and manage products
-     * @Route("/manage/products/{id}",name = "list-products")
-     *
-     * @param ToolsShopService $shopService
-     * @param Shops $shop
-     * @return void
-     */
-    public function productsList(ToolsShopService $shopService, Shops $shop)
-    {
-
-        return $this->render('shop/listProducts.html.twig', [
-            'controller_name' => 'ShopAdmin',
-            'current_menu' => 'list-products',
-            'current_shop' => $shopService->getCurrentShop(),
-            'products_list' => $shopService->createPaginationList(),
-            'sub_categories' => $shopService->getSubCategories(),
-            'nbSubCat' => $shopService->getNumberOfCategories(),
-            'products_without_cat' => $shopService->productWithoutSubCategory()
-        ]);
-    }
 
     /**
      * @Route("/manage/products/add/{id}",name = "add-product")
@@ -194,7 +172,7 @@ class ShopController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setShop($shop);
-
+            
             if ($file = $form->get('picture')->getData()) {
                 if ($product->getPicture()) {
                     $pastPicture = $this->getParameter('upload_directory') . '/' . $product->getPicture();
@@ -209,6 +187,8 @@ class ShopController extends AbstractController
             }
             $manager->persist($product);
             $manager->flush();
+            return $this->redirect($form->get('redirect_url')->getData());
+
         }
         return $this->render('product/addEditProduct.html.twig', [
             'current_controller' => 'ShopAdmin',

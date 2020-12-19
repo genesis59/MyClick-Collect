@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Ordered;
+use App\Entity\Shops;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +19,17 @@ class OrderedRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ordered::class);
+    }
+
+    public function getOrderedByShopAndUser(Shops $shop, User $user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('o.shop = :shop')
+            ->setParameter('shop', $shop)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

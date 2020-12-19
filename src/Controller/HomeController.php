@@ -2,14 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\OrderedProducts;
 use App\Entity\Shops;
 use App\Entity\Towns;
 use App\Entity\TownSearch;
+use App\Form\OrderedProductsType;
 use App\Form\TownSearchType;
+use App\Repository\OrderedProductsRepository;
+use App\Repository\OrderedRepository;
 use App\Repository\ShopCategoriesRepository;
 use App\Repository\ShopsRepository;
 use App\Repository\TownsRepository;
+use App\Service\OrderedProductService;
 use App\Service\ToolsShopService;
+use ContainerQQhncSe\getOrderedProductsTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +42,13 @@ class HomeController extends AbstractController
      * @param ShopCategoriesRepository $shopCategoriesRepository
      * @return Response
      */
-    public function index(ToolsShopService $shopService,Request $request, ShopCategoriesRepository $shopCategoriesRepository): Response
+    public function index(ToolsShopService $shopService,Request $request, ShopCategoriesRepository $shopCategoriesRepository,OrderedProductService $or): Response
     {
+        $user = $this->getUser();
+        $nbToTalProductInCart = 0;
+        if($user){
+            $nbToTalProductInCart = $or->getNbTotalProductInCart($user);
+        }
         $search = new TownSearch();
         $message = false;
         $form = $this->createForm(TownSearchType::class, $search);
@@ -53,7 +64,9 @@ class HomeController extends AbstractController
             'shopList' => $shopList,
             'formSearchTown' => $form->createView(),
             'message' => $message,
-            'search' => $search->getZipCodeSearch() || $search->getNameTownSearch()
+            'search' => $search->getZipCodeSearch() || $search->getNameTownSearch(),
+            'nb_product_in_cart' => $nbToTalProductInCart
+
         ]);
     }
 
@@ -64,7 +77,12 @@ class HomeController extends AbstractController
      * 
      * @return Response
      */
-    public function userInsideShop(ToolsShopService $shopService,Shops $shop){
+    public function userInsideShop(ToolsShopService $shopService,Shops $shop,OrderedProductService $or){
+        $user = $this->getUser();
+        $nbToTalProductInCart = 0;
+        if($user){
+            $nbToTalProductInCart = $or->getNbTotalProductInCart($user);
+        }
         
         return $this->render('shop/userViewInsideShop.html.twig', [
             'controller_name' => 'home',
@@ -73,7 +91,8 @@ class HomeController extends AbstractController
             'sub_categories' => $shopService->getSubCategories(),
             'nbSubCat' => $shopService->getNumberOfCategories(),
             'products' => $shopService->createPaginationList(),
-            'products_without_cat' => $shopService->productWithoutSubCategory()
+            'products_without_cat' => $shopService->productWithoutSubCategory(),
+            'nb_product_in_cart' => $nbToTalProductInCart
         ]);
     }
     

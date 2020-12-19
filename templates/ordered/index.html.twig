@@ -1,0 +1,12 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Mon Panier{% endblock %}
+
+
+{% block body %}
+<h1>Liste des commandes non validés</h1>
+<hr>
+{% for items in product_list_by_ordered %}
+    {% include 'product/layout/cartProductPresentation.html.twig' %}  
+{% endfor %}
+{% endblock %}

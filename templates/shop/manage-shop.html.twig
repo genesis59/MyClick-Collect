@@ -12,9 +12,10 @@
             <a href="{{ path('shop_list-sub-categories',{'id': current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Gérer les catégories</a>
         </div>
     </div>
+    
     <div class="row">
         <div class="col">
-            <a href="{{ path('shop_list-products',{'id' : current_shop.id }) }}" class="btn btn-primary btn-block mb-3">Gérer les produits</a>
+            <a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Ajouter un produit </a>
         </div>
     </div>
     <div class="row border-bottom border-info">
@@ -25,6 +26,6 @@
 {% endblock %}
 
 {% block main %}
-    <h1 class="mt-4">Mon magasin {{ current_shop.nameShop }}</h1> 
+    <h1 class="mt-4">Gestion du magasin : {{ current_shop.nameShop }}</h1> 
     {% include 'shop/layout/shopStructureTemplate.html.twig' %}
 {% endblock %}

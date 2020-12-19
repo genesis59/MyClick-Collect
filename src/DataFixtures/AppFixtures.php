@@ -82,7 +82,8 @@ class AppFixtures extends Fixture
             ->setPassword($this->userPasswordEncoder->encodePassword($user, 'admin'))
             ->setTown($faker->randomElement($tabTown))
             ->setStreetNumber($faker->buildingNumber)
-            ->setStreet($faker->streetName);
+            ->setStreet($faker->streetName)
+            ->setCreatedAt(new \DateTime());
         $manager->persist($user);
 
         // Création de quelques utilisateurs
@@ -96,7 +97,8 @@ class AppFixtures extends Fixture
                 ->setPassword($this->userPasswordEncoder->encodePassword($user, 'root'))
                 ->setTown($faker->randomElement($tabTown))
                 ->setStreetNumber($faker->buildingNumber)
-                ->setStreet($faker->streetName);
+                ->setStreet($faker->streetName)
+                ->setCreatedAt(new \DateTime());
             // Ajout des users au tableau
             array_push($tabUsers, $user);
             $manager->persist($user);
@@ -113,7 +115,8 @@ class AppFixtures extends Fixture
                 ->setPassword($this->userPasswordEncoder->encodePassword($trader, 'root'))
                 ->setTown($faker->randomElement($tabTown))
                 ->setStreetNumber($faker->buildingNumber)
-                ->setStreet($faker->streetName);
+                ->setStreet($faker->streetName)
+                ->setCreatedAt(new \DateTime());
             // Ajout des traders au tableau
             array_push($tabTraders, $trader);
             $manager->persist($trader);
@@ -142,7 +145,8 @@ class AppFixtures extends Fixture
                     ->setStreetNumber($faker->buildingNumber)
                     ->setStreet($faker->streetName)
                     ->setEmail($faker->email)
-                    ->setPhoneNumber($faker->phoneNumber);
+                    ->setPhoneNumber($faker->phoneNumber)
+                    ->setCreatedAt(new \DateTime());
                 // Ajout des magasins au tableau
                 array_push($tabShop, $shop);
                 $manager->persist($shop);

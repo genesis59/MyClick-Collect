@@ -1,0 +1,46 @@
+<div class="container">
+    <h2 class="mt-3">Votre commande au magasin {{ items[0].product.shop.nameShop }}</h2>
+    <table class="table table-bordered bg-white text-center mt-3">
+        <thead>
+        <tr>
+            <th scope="col">Photo</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Quantité</th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% set prixTotal = 0 %}
+            {% for item in items %}
+                <tr>
+                    <td><img src="{{ asset('images/' ~ item.product.picture )}}" width="100" alt="image du produit"></td>
+                    <td><div>{{ item.product.title }}</div></td>
+                    <td>{{ item.product.price }} €</td>
+                    <td>{{ item.quantity }}</td>
+
+                    {% if item.quantity <= item.product.stock %}
+                        <td>{{ item.product.price * item.quantity }} €</td>
+                        {% set prixTotal = prixTotal + item.product.price * item.quantity %}
+
+                    {% else %}
+                        <td class="bg-danger">
+<pre class="text-white">
+Désolé la quantité demandé
+pour ce produit n'est plus
+disponible.
+Stock disponible: {{ item.product.stock }}
+</pre>                           
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            <tr>
+                <td><a href="#" class="btn btn-primary">Valider la commande</a></td>
+                <td colspan="3" class="text-right">Total de la commande : </td>
+                <td>{{ prixTotal }} €</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>  
+</div>

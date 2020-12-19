@@ -46,6 +46,11 @@ class Ordered
      */
     private $orderedProducts;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $orderReady;
+
     public function __construct()
     {
         $this->orderedProducts = new ArrayCollection();
@@ -130,6 +135,18 @@ class Ordered
                 $orderedProduct->setOrdered(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrderReady(): ?bool
+    {
+        return $this->orderReady;
+    }
+
+    public function setOrderReady(bool $orderReady): self
+    {
+        $this->orderReady = $orderReady;
 
         return $this;
     }
