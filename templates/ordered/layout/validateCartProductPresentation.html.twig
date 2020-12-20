@@ -1,0 +1,50 @@
+<div class="container">
+    <h2 class="mt-3">Votre commande au magasin {{ items[0].product.shop.nameShop }}</h2>
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <div class="table-responsive">
+        <table class="table table-bordered bg-white text-center mt-3">
+            <thead>
+            <tr>
+                <th scope="col">Photo</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Date de la commande</th>
+                <th scope="col">Prix</th>
+                <th scope="col">Quantité commandé</th>
+                <th scope="col">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% set prixTotal = 0 %}
+                {% for item in items %}
+                    <tr>
+                        <td><img src="{{ asset('images/' ~ item.product.picture )}}" width="100" alt="image du produit"></td>
+                        <td><div>{{ item.product.title }}</div></td>
+                        <td>{{ item.ordered.date | date('d M y à H:i') }}</td>
+                        <td>{{ item.product.price }} €</td>
+                        <td> 
+                            Quantité demandé : {{ item.quantity }}
+                        </td>      
+                        <td>{{ item.product.price * item.quantity }} €</td>
+                        {% set prixTotal = prixTotal + item.product.price * item.quantity %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class="bg-success text-white">
+                        {% if items[0].ordered.orderReady %}
+                        Votre commande est prête, vous pouvez aller la retirer chez votre commerçant.
+                        {% else %}
+                        La commande a bien été validé et est en cours de préparation.
+                        {% endif %}
+                    </td>
+                    <td colspan="3" class="text-right">Total de la commande : </td>
+                    <td>{{ prixTotal }} €</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>  
+</div>

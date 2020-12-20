@@ -47,7 +47,7 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
         if($user){
-            $nbToTalProductInCart = $or->getNbTotalProductInCart($user);
+            $nbToTalProductInCart = $or->getNbTotalProductInCartNoValidate($user);
         }
         $search = new TownSearch();
         $message = false;
@@ -81,7 +81,7 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
         if($user){
-            $nbToTalProductInCart = $or->getNbTotalProductInCart($user);
+            $nbToTalProductInCart = $or->getNbTotalProductInCartNoValidate($user);
         }
         
         return $this->render('shop/userViewInsideShop.html.twig', [

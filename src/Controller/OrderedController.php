@@ -20,22 +20,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderedController extends AbstractController
 {
     /**
-     * @Route("/ordered", name="ordered")
+     * @Route("/ordered", name="ordered-by-home")
+     * @Route("/ordered/{id}", name="ordered")
      */
-    public function index(OrderedProductService $ops): Response
+    public function index(OrderedProductService $ops,Shops $shop = null): Response
     {
-
-        if($this->getUser()){
+        if(!$shop) $shop = null;
+        if ($this->getUser()) {
             $productListByOrdered = $ops->getListProductByOrdered($this->getUser());
             return $this->render('ordered/index.html.twig', [
                 'controller_name' => 'OrderedController',
-                'product_list_by_ordered' => $productListByOrdered
+                'product_list_by_ordered' => $productListByOrdered,
+                'last_shop_consult' => $shop
             ]);
         } else {
             return $this->redirectToRoute('app_login');
         }
-        
-        
     }
 
     /**
@@ -48,33 +48,37 @@ class OrderedController extends AbstractController
      * @param User $user
      * @return void
      */
-    public function addToCart(Request $request, Shops $shop, Products $product, OrderedRepository $orderedRepo, User $user, EntityManagerInterface $manager, OrderedProductsRepository $orderedProductRepo)
+    public function addToCart(OrderedProductService $ops, Request $request, Shops $shop, Products $product, User $user, EntityManagerInterface $manager)
     {
-        if (!$orderedRepo->getOrderedByShopAndUser($shop, $user)) {
-            $ordered = new Ordered();
-            $ordered->setShop($shop)
-                ->setUser($user)
-                ->setDate(new \DateTime())
-                ->setStatus(0)
-                ->setOrderReady(0);
-            $manager->persist($ordered);
-            $manager->flush();
-        }
-        $ordered = $orderedRepo->getOrderedByShopAndUser($shop, $user);
-        if (!$orderedProductRepo->getOrderedProductByOrderedAndProduct($product, $ordered[0])) {
-            $orderedProduct = new OrderedProducts();
-            $orderedProduct->setOrdered($ordered[0])
-                ->setProduct($product)
-                ->setQuantity($request->query->get('quantity'));
-        } else {
-            $orderedProduct = $orderedProductRepo->getOrderedProductByOrderedAndProduct($product, $ordered[0])[0];
-            $orderedProduct->setQuantity($request->query->get('quantity'));
-        }
 
-        $manager->persist($orderedProduct);
+        $ops->manageCartOrdered($user, $shop, $product);
         $manager->flush();
         //dd($request);
         return $this->redirect($request->headers->get('referer'));
+    }
 
+    /**
+     * @Route("/ordered/delete-ordered-product/{id}", name="delete-ordered-product")
+     *
+     * @param OrderedProducts $orderedProduct
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return void
+     */
+    public function deleteOrderedProduct(OrderedProducts $op, OrderedProductService $ops, Request $request)
+    {
+        $ops->manageDeleteOfCartOrdered($op);
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    /**
+     * @Route("/ordered/valid-cart/{id}", name="valid-cart")
+     *
+     * @return void
+     */
+    public function validCart(Ordered $ordered, OrderedProductService $ops,Request $request)
+    {
+        $ops->validateOneOrderedOfCart($ordered);
+        return $this->redirect($request->headers->get('referer'));
     }
 }

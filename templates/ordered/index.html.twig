@@ -4,9 +4,23 @@
 
 
 {% block body %}
-<h1>Liste des commandes non validés</h1>
+<div class="row align-items-center mt-3">
+    <div class="col">
+        <h1>Liste des commandes</h1>
+    </div>
+    <div class="col text-right">
+        <a 
+        class="btn btn-primary"
+        href="{{ last_shop_consult != null ? path('enter-shop',{'id':last_shop_consult.id}) : path('home') }}">{{ last_shop_consult != null  ? 'Retour au magasin' : 'Retour à l\'accueil' }}
+        </a>
+    </div>
+</div>
 <hr>
 {% for items in product_list_by_ordered %}
-    {% include 'product/layout/cartProductPresentation.html.twig' %}  
+{% if items[0].ordered.status %}
+    {% include 'ordered/layout/validateCartProductPresentation.html.twig' %}     
+{% else %}
+    {% include 'ordered/layout/cartProductPresentation.html.twig' %}     
+{% endif %}
 {% endfor %}
 {% endblock %}

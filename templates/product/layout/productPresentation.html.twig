@@ -21,13 +21,19 @@
                 {% if item.stock != 0 %}
                     {% if app.user.id is defined %}
                         <form action="{{ path('add-cart',{'shop':current_shop.id,'user':app.user.id,'product':item.id}) }}" method="GET" class="form-group">
-                            <select name="quantity" id="quantity-select" class="form-control">
-                                <option value="0">Quantité</option>
-                                {% set i = 0 %}
-                                {% for i in 0..item.stock %}
-                                <option value="{{ i }}">{{ i }}</option>
-                                {% endfor %}
-                            </select>
+                            <div class="row">
+                                <div class="col-4">
+                                    <label for="quantity-select">Qté</label>
+                                </div>
+                                <div class="col-6">
+                                    <select name="quantity" id="quantity-select" class="form-control">
+                                        {% set i = 1 %}
+                                        {% for i in 1..item.stock %}
+                                        <option value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>    
+                            </div>      
                             <button class="btn btn-primary mt-2">Ajouter au panier</button>
                         </form>
                     {% else %}
