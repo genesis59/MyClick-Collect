@@ -9,17 +9,6 @@ use App\Repository\TownsRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-// ***********************************************************************************************
-// **                                      INDEX                                                **
-// **                                                                                           **
-// **                          function createPaginationList()                                  **
-// ** function pagination($listToPaginate, Int $nbElementByPage = 5, String $newValueGet = null)**
-// **                   function paginationProductWithOrWithoutCategory()                       **
-// **                    function searchOrNotToSearch(TownSearch $search)                       **
-// **                      function randomShop(Int $numberOfRandomShop)                         **
-// **                     function findShopBySearch(TownSearch $search)                         **
-// **                                                                                           **
-// ***********************************************************************************************
 
 class ToolsShopService
 {

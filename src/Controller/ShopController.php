@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Ordered;
 use App\Entity\Products;
 use App\Entity\Shops;
 use App\Entity\ShopSubCategories;
 use App\Form\ProductsType;
 use App\Form\ShopSubCategoriesType;
 use App\Form\ShopType;
+use App\Repository\OrderedRepository;
 use App\Repository\ShopsRepository;
 use App\Service\ToolsShopService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,27 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-// ***********************************************************************************************
-// **                                      INDEX                                                **
-// **                                                                                           **
-// **                                CLASS MAIN ROUTE                                           **
-// **                            Route("/shop", name="shop_")                                   **
-// **                                HOME SHOPS MANAGER                                         **
-// **                           Route("/admin", name="admin")                                   **
-// **                                                                                           **
-// **                                  SHOPS MANAGER                                            **
-// **    Route("/new-shop", name="new-shop") and Route("/edit-shop/{id}", name="edit-shop")     **
-// **                       Route("/manage/{id}",name="manage-shop")                            **
-// **                                                                                           **
-// **                                 PRODUCTS MANAGER                                          **
-// **                 Route("/manage/products/{id}",name = "list-products")                     **
-// **                                                                                           **
-// **                              SUBCATEGORIES MANAGER                                        **
-// **           Route("/manage/sub-categories/{id}",name = "list-sub-categories")               **
-// **           Route("/manage/sub-categories/edit/{id}",name = "edit-sub-category")            **
-// **         Route("/manage/sub-categories/delete/{id}",name = "delete-sub-category")          **
-// **                                                                                           **
-// ***********************************************************************************************
 
 /**
  * @Route("/shop", name="shop_")
@@ -92,7 +73,8 @@ class ShopController extends AbstractController
     {
         if (!$shop) {
             $shop = new Shops();
-            $shop->setTrader($this->getUser());
+            $shop->setTrader($this->getUser())
+                ->setCreatedAt(new \DateTime());
             $current_menu = 'new-shop';
         } else {
             $current_menu = 'edit-shop';
@@ -280,5 +262,49 @@ class ShopController extends AbstractController
         $manager->remove($subCategory);
         $manager->flush();
         return $this->redirectToRoute('shop_list-sub-categories', ['id' => $subCategory->getShop()->getId()]);
+    }
+
+    // *****************************
+    // **    ORDERED MANAGER     **
+    // *****************************
+
+    /**
+     * @Route("/list-ordered-in-waiting/{id}",name = "list-ordered-in-waiting")
+     *
+     * @param OrderedRepository $or
+     * @param Shops $shop
+     * @return void
+     */
+    public function listOrderedInWaiting(OrderedRepository $or,Shops $shop){
+
+        if(!$shop) $shop = null;
+        $orderedList = $or->findBy(['shop' => $shop,'status' => 1,'orderReady' => 0 ]);
+
+        return $this->render('shop/listOrderedForTrader.html.twig',[
+            'product_list_by_ordered' => $orderedList,
+            'controller_name' => 'ShopAdmin',
+            'current_menu' => 'list-ordered',
+            'last_shop_consult' => $shop
+        ]);
+    }
+
+    /**
+     * @Route("/list-ordered-ready-to-leave/{id}",name = "list-ordered-ready-to-leave")
+     *
+     * @param OrderedRepository $or
+     * @param Shops $shop
+     * @return void
+     */
+    public function listOrderedInReadyToLeave(OrderedRepository $or,Shops $shop){
+
+        if(!$shop) $shop = null;
+        $orderedList = $or->findBy(['shop' => $shop,'status' => 1,'orderReady' => 1 ]);
+
+        return $this->render('shop/listOrderedForTrader.html.twig',[
+            'product_list_by_ordered' => $orderedList,
+            'controller_name' => 'ShopAdmin',
+            'current_menu' => 'list-ordered',
+            'last_shop_consult' => $shop
+        ]);
     }
 }

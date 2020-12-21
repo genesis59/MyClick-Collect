@@ -13,19 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-// ***********************************************************************************************
-// **                                      INDEX                                                **
-// **                                                                                           **
-// **                   function getNbTotalProductInCart(User $user)                            **
-// **                          function getListProductByOrdered()                               **
-// **          function manageCartOrdered(User $user, Shops $shop, Products $product)           **
-// **                  function validateOneOrderedOfCart(Ordered $ordered)                      **
-// **               function manageDeleteOfCartOrdered(OrderedProducts $op)                     **
-// **    function checkProductIsInListAndPersist(Products $product,Ordered $ordered)            **
-// **                             function createNewOrdered()                                   **
-// **                          function createNewOrderedProduct()                               **
-// **                                                                                           **
-// ***********************************************************************************************
 
 class OrderedProductService
 {
@@ -50,7 +37,7 @@ class OrderedProductService
      */
     private $request;
 
-    public function __construct(OrderedProductsRepository $orderedProductRepo, OrderedRepository $orderedRepo, EntityManagerInterface $manager,RequestStack $request)
+    public function __construct(OrderedProductsRepository $orderedProductRepo, OrderedRepository $orderedRepo, EntityManagerInterface $manager, RequestStack $request)
     {
         $this->orderedProductRepo = $orderedProductRepo;
         $this->orderedRepo = $orderedRepo;
@@ -59,6 +46,12 @@ class OrderedProductService
     }
 
 
+    /**
+     * count of product all state in cart
+     *
+     * @param User $user
+     * @return void
+     */
     public function getNbTotalProductInCart(User $user)
     {
         $orderedList = $this->orderedRepo->findBy(['user' => $user]);
@@ -70,9 +63,15 @@ class OrderedProductService
         return $nbToTalProductInCart;
     }
 
+    /**
+     * count of product no validate in cart
+     *
+     * @param User $user
+     * @return void
+     */
     public function getNbTotalProductInCartNoValidate(User $user)
     {
-        $orderedList = $this->orderedRepo->findBy(['user' => $user,'status' => 0]);
+        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 0]);
         $nbToTalProductInCart = 0;
         foreach ($orderedList as $ordered) {
             $productListByOrdered = $this->orderedProductRepo->findBy(['ordered' => $ordered]);
@@ -81,10 +80,14 @@ class OrderedProductService
         return $nbToTalProductInCart;
     }
 
-    public function getListProductByOrdered(User $user)
+    /**
+     * get list of products from ordered list
+     *
+     * @param Ordered[] $orderedList
+     * @return void
+     */
+    private function getOrderedProductByOrdered($orderedList)
     {
-
-        $orderedList = $this->orderedRepo->findBy(['user' => $user]);
         $productListByOrdered = [];
         foreach ($orderedList as $ordered) {
             $productList = $this->orderedProductRepo->findBy(['ordered' => $ordered]);
@@ -93,6 +96,67 @@ class OrderedProductService
         return $productListByOrdered;
     }
 
+    /**
+     * get list of products from all ordered list of this user
+     *
+     * @param User $user
+     * @return void
+     */
+    public function getListProductByAllOrdered(User $user)
+    {
+
+        $orderedList = $this->orderedRepo->findBy(['user' => $user]);
+        return $this->getOrderedProductByOrdered($orderedList);
+    }
+
+    /**
+     * get list of products from no validate ordered list of this user
+     *
+     * @param User $user
+     * @return void
+     */
+    public function getListProductByOrderedNoValidate(User $user)
+    {
+
+        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 0]);
+        return $this->getOrderedProductByOrdered($orderedList);
+    }
+
+    /**
+     * get list of products from validate ordered list of this user
+     *
+     * @param User $user
+     * @return void
+     */
+    public function getListProductByOrderedValidate(User $user)
+    {
+
+        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 1, 'orderReady' => 0]);
+        return $this->getOrderedProductByOrdered($orderedList);
+    }
+
+    /**
+     * get list of products from ready ordered list of this user
+     *
+     * @param User $user
+     * @return void
+     */
+    public function getListProductByOrderedReady(User $user)
+    {
+
+        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'orderReady' => 1]);
+        return $this->getOrderedProductByOrdered($orderedList);
+    }
+
+
+    /**
+     * manage cart if it is necessary to create new ordered at the shop or create a new one
+     *
+     * @param User $user
+     * @param Shops $shop
+     * @param Products $product
+     * @return void
+     */
     public function manageCartOrdered(User $user, Shops $shop, Products $product)
     {
         $orderedList = $this->orderedRepo->getOrderedByShopAndUser($shop, $user);
@@ -118,6 +182,12 @@ class OrderedProductService
         }
     }
 
+    /**
+     * update status target ordered to validate (status=1)
+     *
+     * @param Ordered $ordered
+     * @return void
+     */
     public function validateOneOrderedOfCart(Ordered $ordered)
     {
         foreach ($ordered->getOrderedProducts() as $orderedProduct) {
@@ -137,6 +207,12 @@ class OrderedProductService
         }
     }
 
+    /**
+     * in cart delete product and delete ordered if there aren't product in order
+     *
+     * @param OrderedProducts $op
+     * @return void
+     */
     public function manageDeleteOfCartOrdered(OrderedProducts $op)
     {
         if (count($op->getOrdered()->getOrderedProducts()) == 1) {
@@ -148,6 +224,13 @@ class OrderedProductService
         $this->manager->flush();
     }
 
+    /**
+     * manage update quantity for not add a new product if already exist in this ordered
+     *
+     * @param Products $product
+     * @param Ordered $ordered
+     * @return void
+     */
     private function checkProductIsInListAndPersist(Products $product, Ordered $ordered)
     {
         // check if product is already in order
@@ -163,6 +246,13 @@ class OrderedProductService
         }
     }
 
+    /**
+     * create a new ordered
+     *
+     * @param User $user
+     * @param Shops $shop
+     * @return Ordered
+     */
     private function createNewOrderedAndPersist(User $user, Shops $shop)
     {
         $ordered = new Ordered();
@@ -170,11 +260,19 @@ class OrderedProductService
             ->setUser($user)
             ->setDate(new \DateTime())
             ->setStatus(0)
-            ->setOrderReady(0);
+            ->setOrderReady(0)
+            ->setRecupByUser(0);
         $this->manager->persist($ordered);
         return $ordered;
     }
 
+    /**
+     * create a new OrderedProduct
+     *
+     * @param Ordered $ordered
+     * @param Products $product
+     * @return OrderedProducts
+     */
     private function createNewOrderedProductAndPersist(Ordered $ordered, Products $product)
     {
         $orderedProduct = new OrderedProducts();

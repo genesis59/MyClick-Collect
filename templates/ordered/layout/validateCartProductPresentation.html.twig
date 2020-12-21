@@ -1,5 +1,7 @@
 <div class="container">
-    <h2 class="mt-3">Votre commande au magasin {{ items[0].product.shop.nameShop }}</h2>
+    {% set j = 0 %}
+    <h2 class="mt-3">Votre commande numéro {{ items[j].ordered.id }} au magasin {{ items[j].product.shop.nameShop }}</h2>
+    {% set j = j + 1 %}
     {% for message in app.flashes('notice') %}
         <div class="flash-notice alert alert-danger">
             {{ message }}

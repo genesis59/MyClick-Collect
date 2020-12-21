@@ -51,6 +51,11 @@ class Ordered
      */
     private $orderReady;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $recupByUser;
+
     public function __construct()
     {
         $this->orderedProducts = new ArrayCollection();
@@ -147,6 +152,18 @@ class Ordered
     public function setOrderReady(bool $orderReady): self
     {
         $this->orderReady = $orderReady;
+
+        return $this;
+    }
+
+    public function getRecupByUser(): ?bool
+    {
+        return $this->recupByUser;
+    }
+
+    public function setRecupByUser(bool $recupByUser): self
+    {
+        $this->recupByUser = $recupByUser;
 
         return $this;
     }

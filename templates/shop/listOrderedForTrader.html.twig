@@ -1,0 +1,104 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Liste des commandes{% endblock %}
+
+{% block body %}
+    <div class="row align-items-center mt-3">
+        <div class="col-10">
+            {% if product_list_by_ordered != null %}
+                <h1>Liste des commandes {{ product_list_by_ordered[0].orderReady ? 'en attente de récupération' : 'en attente de préparation'}} <br>
+                    magasin {{ product_list_by_ordered[0].shop.nameShop }}</h1>
+            {% else %}
+                <div class="col-6 text-center bg-danger text-white rounded">
+                    <p class="m-4">
+                        Il n'y a aucun élément pour le moment.         
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-2 text-right">
+            <a 
+            class="btn btn-primary"
+            href="{{ path('shop_manage-shop',{'id':last_shop_consult.id}) }}">Retour au magasin
+            </a>
+        </div>
+    </div>
+    <hr>
+    {% for items in product_list_by_ordered %}
+        <div class="container">
+            <h2 class="mt-3">Commande numéro {{ items.id }} </h2>
+            <div class="table-responsive">
+                <table class="table table-bordered bg-white text-center mt-3">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">email</th>
+                        <th scope="col">Téléphone</th>
+                        <th scope="col">Adresse</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td>{{ items.user.lastName }}</td>
+                                <td>{{ items.user.firstName }}</td>
+                                <td>{{ items.user.email }}</td>
+                                <td>{{ items.user.phoneNumber }}</td>
+                                <td> {{ items.user.streetNumber }}, {{ items.user.street }} à {{ items.user.town }}</td>      
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered bg-white text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">Photo</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Date de la commande</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Quantité commandé</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% set prixTotal = 0 %}
+                        {% for item in items.orderedProducts %}
+                            <tr>
+                                <td><img src="{{ asset('images/' ~ item.product.picture )}}" width="100" alt="image du produit"></td>
+                                <td><div>{{ item.product.title }}</div></td>
+                                <td>{{ item.ordered.date | date('d M y à H:i') }}</td>
+                                <td>{{ item.product.price }} €</td>
+                                <td> 
+                                    Quantité demandé : {{ item.quantity }}
+                                </td>      
+                                <td>{{ item.product.price * item.quantity }} €</td>
+                                {% set prixTotal = prixTotal + item.product.price * item.quantity %}
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="bg-success text-white">
+                                {% if items.orderReady %}
+                                La commande a été préparé
+                                {% else %}
+                                La commande n'as pas encore été préparé
+                                {% endif %}
+                            </td>
+                            <td colspan="3" class="text-right">Total de la commande : </td>
+                            <td>{{ prixTotal }} €</td>
+                            <td>
+                                {% if items.orderReady %}
+                                <a href="#" class="btn btn-primary">Marqué la commande remise au client</a>
+                                {% else %}
+                                <a href="#" class="btn btn-primary">Marqué la commande prête</a>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <hr>  
+        </div> 
+    {% endfor %}
+{% endblock %}

@@ -18,9 +18,19 @@
             <a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Ajouter un produit </a>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ path('shop_list-ordered-in-waiting',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Liste des commandes en attente de préparation</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ path('shop_list-ordered-ready-to-leave',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Liste des commandes en attente de récupération</a>
+        </div>
+    </div>
     <div class="row border-bottom border-info">
         <div class="col">
-            <a href="#" class="btn btn-primary btn-block mb-3">Liste des commandes</a>
+            <a href="" class="btn btn-primary btn-block mb-3">Liste des commandes remis au client</a>
         </div>
     </div>
 {% endblock %}

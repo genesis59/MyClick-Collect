@@ -21,13 +21,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-// ***********************************************************************************************
-// **                                      INDEX                                                **
-// **                                                                                           **
-// **                             @Route("/", name="home")                                      **
-// **                    Route("/consult-shop/{id}", name="enter-shop")                         **
-// **                                                                                           **
-// ***********************************************************************************************
 
 class HomeController extends AbstractController
 {
