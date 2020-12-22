@@ -7,8 +7,6 @@ use App\Entity\OrderedProducts;
 use App\Entity\Products;
 use App\Entity\Shops;
 use App\Entity\User;
-use App\Form\OrderedProductsType;
-use App\Repository\OrderedProductsRepository;
 use App\Repository\OrderedRepository;
 use App\Service\OrderedProductService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,11 +21,11 @@ class OrderedController extends AbstractController
      * @Route("/ordered", name="ordered-by-home")
      * @Route("/ordered/{id}", name="ordered")
      */
-    public function indexCart(OrderedProductService $ops,Shops $shop = null): Response
+    public function indexCart(OrderedProductService $ops, Shops $shop = null): Response
     {
-        if(!$shop) $shop = null;
+        if (!$shop) $shop = null;
         if ($this->getUser()) {
-            $productListByOrdered = $ops->getListProductByOrderedNoValidate($this->getUser());
+            $productListByOrdered = $ops->getListProductInProgressByUser($this->getUser());
             return $this->render('ordered/index.html.twig', [
                 'controller_name' => 'OrderedController',
                 'product_list_by_ordered' => $productListByOrdered,
@@ -42,11 +40,11 @@ class OrderedController extends AbstractController
      * @Route("/ordered-in-prepare", name="ordered-in-prepare-by-home")
      * @Route("/ordered-in-prepare/{id}", name="ordered-in-prepare")
      */
-    public function userOrderedInPrepare(OrderedProductService $ops,Shops $shop = null): Response
+    public function userOrderedInPrepare(OrderedProductService $ops, Shops $shop = null): Response
     {
-        if(!$shop) $shop = null;
+        if (!$shop) $shop = null;
         if ($this->getUser()) {
-            $productListByOrdered = $ops->getListProductByOrderedValidate($this->getUser());
+            $productListByOrdered = $ops->getListProductInProgressByUser($this->getUser(), 1);
             return $this->render('ordered/index.html.twig', [
                 'controller_name' => 'OrderedController',
                 'product_list_by_ordered' => $productListByOrdered,
@@ -61,11 +59,11 @@ class OrderedController extends AbstractController
      * @Route("/ordered-ready", name="ordered-ready-by-home")
      * @Route("/ordered-ready/{id}", name="ordered-ready")
      */
-    public function userOrderedReady(OrderedProductService $ops,Shops $shop = null): Response
+    public function userOrderedReady(OrderedProductService $ops, Shops $shop = null): Response
     {
-        if(!$shop) $shop = null;
+        if (!$shop) $shop = null;
         if ($this->getUser()) {
-            $productListByOrdered = $ops->getListProductByOrderedReady($this->getUser());
+            $productListByOrdered = $ops->getListProductInProgressByUser($this->getUser(), 1, 1);
             return $this->render('ordered/index.html.twig', [
                 'controller_name' => 'OrderedController',
                 'product_list_by_ordered' => $productListByOrdered,
@@ -76,7 +74,24 @@ class OrderedController extends AbstractController
         }
     }
 
-
+    /**
+     * @Route("/ordered-delivered", name="ordered-delivered-by-home")
+     * @Route("/ordered-delivered/{id}", name="ordered-delivered")
+     */
+    public function userOrderedDelivered(OrderedProductService $ops, Shops $shop = null): Response
+    {
+        if (!$shop) $shop = null;
+        if ($this->getUser()) {
+            $productListByOrdered = $ops->getListProductInProgressByUser($this->getUser(), 1, 1, 1);
+            return $this->render('ordered/index.html.twig', [
+                'controller_name' => 'OrderedController',
+                'product_list_by_ordered' => $productListByOrdered,
+                'last_shop_consult' => $shop
+            ]);
+        } else {
+            return $this->redirectToRoute('app_login');
+        }
+    }
 
     /**
      * @Route("/ordered/add-cart/{shop}/{user}/{product}", name="add-cart")
@@ -95,7 +110,6 @@ class OrderedController extends AbstractController
         return $this->redirect($request->headers->get('referer'));
     }
 
-
     /**
      * @Route("/ordered/delete-ordered-product/{id}", name="delete-ordered-product")
      *
@@ -110,13 +124,36 @@ class OrderedController extends AbstractController
         return $this->redirect($request->headers->get('referer'));
     }
 
+    /**
+     * delete order and update stock
+     * @Route("/ordered/delete-ordered/{id}", name="delete-ordered")
+     *
+     * @param Ordered $ordered
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function deleteOrdered(Ordered $ordered, EntityManagerInterface $manager, Request $request)
+    {
+        
+        foreach($ordered->getOrderedProducts() as $orderedProduct){
+            
+            $product = $orderedProduct->getProduct();
+            $stock = $product->getStock();
+            $product->setStock($stock + $orderedProduct->getQuantity());
+            $manager->persist($product);
+            
+        }
+        $manager->remove($ordered);
+        $manager->flush();
+        return $this->redirect($request->headers->get('referer'));
+    }
 
     /**
      * @Route("/ordered/valid-cart/{id}", name="valid-cart")
      *
      * @return void
      */
-    public function validCart(Ordered $ordered, OrderedProductService $ops,Request $request)
+    public function validCart(Ordered $ordered, OrderedProductService $ops, Request $request)
     {
         $ops->validateOneOrderedOfCart($ordered);
         return $this->redirect($request->headers->get('referer'));

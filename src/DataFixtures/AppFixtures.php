@@ -155,7 +155,7 @@ class AppFixtures extends Fixture
         $tabSubCategories = ['xbox', 'ps5', 'switch'];
         $m = 0;
         foreach ($tabShop as $shop) {
-            // creétion d'un magasins sans sous catégorie
+            // création d'un magasin sans sous catégorie
             if ($m == 0) {
                 // création de produits sans categorie
                 for ($n = 1; $n <= 10; $n++) {
@@ -166,7 +166,8 @@ class AppFixtures extends Fixture
                         ->setStock($faker->randomDigit())
                         ->setDesignation($faker->paragraph(2, true))
                         ->setPicture('24.jpg')
-                        ->setPrice($faker->randomDigit());
+                        ->setPrice($faker->randomDigit())
+                        ->setNotVisible(0);
                     $manager->persist($product);
                 }
                 $m++;
@@ -187,7 +188,8 @@ class AppFixtures extends Fixture
                             ->setStock($faker->randomDigit())
                             ->setDesignation($faker->paragraph(2, true))
                             ->setPicture('2' . $l . '.jpg')
-                            ->setPrice($faker->randomDigit());
+                            ->setPrice($faker->randomDigit())
+                            ->setNotVisible(0);
                         $manager->persist($product);
                     }
                     $l++;
@@ -201,7 +203,8 @@ class AppFixtures extends Fixture
                         ->setStock($faker->randomDigit())
                         ->setDesignation($faker->paragraph(2, true))
                         ->setPicture('24.jpg')
-                        ->setPrice($faker->randomDigit());
+                        ->setPrice($faker->randomDigit())
+                        ->setNotVisible(0);
                     $manager->persist($product);
                 }
             }

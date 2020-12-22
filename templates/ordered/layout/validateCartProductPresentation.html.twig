@@ -36,13 +36,17 @@
                 {% endfor %}
                 <tr>
                     <td class="bg-success text-white">
-                        {% if items[0].ordered.orderReady %}
-                        Votre commande est prête, vous pouvez aller la retirer chez votre commerçant.
+                        {% if items[0].ordered.recupByUser %}
+                            Commande finalisé et archivé
                         {% else %}
-                        La commande a bien été validé et est en cours de préparation.
+                            {% if items[0].ordered.orderReady %}
+                            Votre commande est prête, vous pouvez aller la retirer chez votre commerçant.
+                            {% else %}
+                            La commande a bien été validé et est en cours de préparation.
+                            {% endif %}
                         {% endif %}
                     </td>
-                    <td colspan="3" class="text-right">Total de la commande : </td>
+                    <td colspan="4" class="text-right">Total de la commande : </td>
                     <td>{{ prixTotal }} €</td>
                 </tr>
             </tbody>

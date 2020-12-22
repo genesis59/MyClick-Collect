@@ -60,6 +60,11 @@ class Products
      */
     private $orderedProducts;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $notVisible;
+
     public function __construct()
     {
         $this->ordereds = new ArrayCollection();
@@ -181,6 +186,18 @@ class Products
                 $orderedProduct->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNotVisible(): ?bool
+    {
+        return $this->notVisible;
+    }
+
+    public function setNotVisible(bool $notVisible): self
+    {
+        $this->notVisible = $notVisible;
 
         return $this;
     }

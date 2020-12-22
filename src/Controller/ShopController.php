@@ -11,6 +11,7 @@ use App\Form\ShopSubCategoriesType;
 use App\Form\ShopType;
 use App\Repository\OrderedRepository;
 use App\Repository\ShopsRepository;
+use App\Service\OrderedProductService;
 use App\Service\ToolsShopService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -115,8 +116,13 @@ class ShopController extends AbstractController
      * @param Shops $shop
      * @return void
      */
-    public function manageShop(ToolsShopService $shopService, Shops $shop, Request $request)
+    public function manageShop(ToolsShopService $shopService, Shops $shop, OrderedProductService $ops)
     {
+
+        $nbToTalProductValidate = $ops->getNbTotalOrderedInProgressByField('shop', $shop, true);
+        $nbToTalProductReady = $ops->getNbTotalOrderedInProgressByField('shop', $shop, true, true);
+        $nbToTalProductDelivered = $ops->getNbTotalOrderedInProgressByField('shop', $shop, true, true, true);
+
         return $this->render('shop/manage-shop.html.twig', [
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'manageshop',
@@ -126,6 +132,9 @@ class ShopController extends AbstractController
             'nbSubCat' => $shopService->getNumberOfCategories(),
             'products' => $shopService->createPaginationList(),
             'products_without_cat' => $shopService->productWithoutSubCategory(),
+            'nb_order_validate' => $nbToTalProductValidate,
+            'nb_order_ready' => $nbToTalProductReady,
+            'nb_order_delivered' => $nbToTalProductDelivered
         ]);
     }
 
@@ -148,13 +157,14 @@ class ShopController extends AbstractController
         $current_menu = 'edit-product';
         if (!$product) {
             $product = new Products();
+            $product->setNotVisible(0);
             $current_menu = 'new-product';
         }
         $form = $this->createForm(ProductsType::class, $product);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $product->setShop($shop);
-            
+
             if ($file = $form->get('picture')->getData()) {
                 if ($product->getPicture()) {
                     $pastPicture = $this->getParameter('upload_directory') . '/' . $product->getPicture();
@@ -170,13 +180,27 @@ class ShopController extends AbstractController
             $manager->persist($product);
             $manager->flush();
             return $this->redirect($form->get('redirect_url')->getData());
-
         }
         return $this->render('product/addEditProduct.html.twig', [
             'current_controller' => 'ShopAdmin',
             'current_menu' => $current_menu,
             'formProduct' => $form->createView()
         ]);
+    }
+
+    /**
+     * the product becomes invisible in shop
+     * @Route("/manage/products/notVisible/{id}",name = "not-visible-product")
+     *
+     * @param Products $product
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function notVisibleProduct(Products $product,EntityManagerInterface $manager,Request $request){
+        $product->setNotVisible(1);
+        $manager->persist($product);
+        $manager->flush();
+        return $this->redirect($request->headers->get('referer'));
     }
 
     // *****************************
@@ -268,6 +292,43 @@ class ShopController extends AbstractController
     // **    ORDERED MANAGER     **
     // *****************************
 
+
+    /**
+     * validate order is prepare
+     * @Route("/validate-prepare-order/{id}",name = "validate-prepare-order")
+     *
+     * @param Ordered $ordered
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return void
+     */
+    public function validatePreparedOrder(Ordered $ordered, EntityManagerInterface $manager, Request $request)
+    {
+        $ordered->setOrderReady(1);
+        $manager->persist($ordered);
+        $manager->flush();
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    /**
+     * validate order is delivered
+     * @Route("/validate-recup-order/{id}",name = "validate-recup-order")
+     *
+     * @param Ordered $ordered
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return void
+     */
+    public function validateDeliveredOrder(Ordered $ordered, EntityManagerInterface $manager, Request $request)
+    {
+        $ordered->setRecupByUser(1);
+        $manager->persist($ordered);
+        $manager->flush();
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+
+
     /**
      * @Route("/list-ordered-in-waiting/{id}",name = "list-ordered-in-waiting")
      *
@@ -275,12 +336,13 @@ class ShopController extends AbstractController
      * @param Shops $shop
      * @return void
      */
-    public function listOrderedInWaiting(OrderedRepository $or,Shops $shop){
+    public function listOrderedInWaiting(OrderedRepository $or, Shops $shop)
+    {
 
-        if(!$shop) $shop = null;
-        $orderedList = $or->findBy(['shop' => $shop,'status' => 1,'orderReady' => 0 ]);
+        if (!$shop) $shop = null;
+        $orderedList = $or->findBy(['shop' => $shop, 'status' => 1, 'orderReady' => 0]);
 
-        return $this->render('shop/listOrderedForTrader.html.twig',[
+        return $this->render('shop/listOrderedForTrader.html.twig', [
             'product_list_by_ordered' => $orderedList,
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'list-ordered',
@@ -295,12 +357,34 @@ class ShopController extends AbstractController
      * @param Shops $shop
      * @return void
      */
-    public function listOrderedInReadyToLeave(OrderedRepository $or,Shops $shop){
+    public function listOrderedInReadyToLeave(OrderedRepository $or, Shops $shop)
+    {
 
-        if(!$shop) $shop = null;
-        $orderedList = $or->findBy(['shop' => $shop,'status' => 1,'orderReady' => 1 ]);
+        if (!$shop) $shop = null;
+        $orderedList = $or->findBy(['shop' => $shop, 'status' => 1, 'orderReady' => 1, 'recupByUser' => 0]);
 
-        return $this->render('shop/listOrderedForTrader.html.twig',[
+        return $this->render('shop/listOrderedForTrader.html.twig', [
+            'product_list_by_ordered' => $orderedList,
+            'controller_name' => 'ShopAdmin',
+            'current_menu' => 'list-ordered',
+            'last_shop_consult' => $shop
+        ]);
+    }
+
+    /**
+     * @Route("/list-ordered-delivered/{id}",name = "list-ordered-delivered")
+     *
+     * @param OrderedRepository $or
+     * @param Shops $shop
+     * @return void
+     */
+    public function listOrderedDelivered(OrderedRepository $or, Shops $shop)
+    {
+
+        if (!$shop) $shop = null;
+        $orderedList = $or->findBy(['shop' => $shop, 'status' => 1, 'orderReady' => 1, 'recupByUser' => 1]);
+
+        return $this->render('shop/listOrderedForTrader.html.twig', [
             'product_list_by_ordered' => $orderedList,
             'controller_name' => 'ShopAdmin',
             'current_menu' => 'list-ordered',

@@ -1,28 +1,65 @@
 {% if app.user.roles is defined %}
     <div class="row">
         <div class="col">
-            <a href="{{ current_menu == 'home' ? path('ordered-by-home') : path('ordered',{'id':current_shop.id}) }}" class="btn btn-primary btn-block my-3">Consulter mon panier {% if nb_product_in_cart is defined %}({{ nb_product_in_cart }}){% endif %}</a>
+            <a 
+                href="{{ current_menu == 'home' ? path('ordered-by-home') : path('ordered',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block my-3">
+                Consulter mon panier 
+                {% if nb_product_in_cart is defined %}( {{ nb_product_in_cart }} article{{ nb_product_in_cart > 1 ? 's' : '' }} )
+                {% endif %}
+            </a>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <a href="#" class="btn btn-primary btn-block mb-3">Consulter mon profil</a>
+            <a 
+                href="#" 
+                class="btn btn-primary btn-block mb-3">
+                Consulter mon profil
+            </a>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <a href="{{ current_menu == 'home' ? path('ordered-in-prepare-by-home') : path('ordered-in-prepare',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Commandes en préparation</a>
+            <a 
+                href="{{ current_menu == 'home' ? path('ordered-in-prepare-by-home') : path('ordered-in-prepare',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                Commandes en préparation
+                {% if nb_order_validate is defined %}({{ nb_order_validate }})
+                {% endif %}
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a 
+                href="{{ current_menu == 'home' ? path('ordered-ready-by-home') : path('ordered-ready',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                Commandes prêtes
+                {% if nb_order_ready is defined %}({{ nb_order_ready }})
+                {% endif %}
+            </a>
         </div>
     </div>
     <div class="row border-bottom border-info">
         <div class="col">
-            <a href="{{ current_menu == 'home' ? path('ordered-ready-by-home') : path('ordered-ready',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Commandes prêtes</a>
+            <a 
+                href="{{ current_menu == 'home' ? path('ordered-delivered-by-home') : path('ordered-delivered',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                Archives commandes
+                {% if nb_order_delivered is defined %}({{ nb_order_delivered }})
+                {% endif %}
+            </a>
         </div>
     </div>
 {% else %}
     <div class="row border-bottom border-info">
         <div class="col">
-            <a href="{{ path('app_login') }}" class="btn btn-primary btn-block my-3">Se connecter</a>
+            <a 
+                href="{{ path('app_login') }}" 
+                class="btn btn-primary btn-block my-3">
+                Se connecter
+            </a>
         </div>
     </div>   
 {% endif %}

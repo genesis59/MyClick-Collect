@@ -5,8 +5,14 @@
 {% block body %}
     <div class="row align-items-center mt-3">
         <div class="col-10">
+
             {% if product_list_by_ordered != null %}
-                <h1>Liste des commandes {{ product_list_by_ordered[0].orderReady ? 'en attente de récupération' : 'en attente de préparation'}} <br>
+                <h1>Liste des commandes 
+                    {{ product_list_by_ordered[0].recupByUser 
+                        ? 'finalisé' 
+                        : (product_list_by_ordered[0].orderReady 
+                            ? 'en attente de récupération' 
+                            : 'en attente de préparation')}}<br>
                     magasin {{ product_list_by_ordered[0].shop.nameShop }}</h1>
             {% else %}
                 <div class="col-6 text-center bg-danger text-white rounded">
@@ -26,7 +32,16 @@
     <hr>
     {% for items in product_list_by_ordered %}
         <div class="container">
-            <h2 class="mt-3">Commande numéro {{ items.id }} </h2>
+            <div class="row align-items-end">
+                <div class="col-8">
+                    <h2 class="mt-3">Commande numéro {{ items.id }} </h2>
+                </div>
+                <div class="col-4 text-right">
+                    {% if items.recupByUser == false %}
+                        <a href="{{ path('delete-ordered',{'id':items.id}) }}" class="btn btn-danger">Supprimer cette commande</a>
+                    {% endif %}
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered bg-white text-center mt-3">
                     <thead>
@@ -78,19 +93,25 @@
                         {% endfor %}
                         <tr>
                             <td class="bg-success text-white">
-                                {% if items.orderReady %}
-                                La commande a été préparé
+                                {% if items.recupByUser == 0 %}
+                                    {% if items.orderReady %}
+                                    En attente de récupération
+                                    {% else %}
+                                    La commande n'as pas encore été préparé
+                                    {% endif %}
                                 {% else %}
-                                La commande n'as pas encore été préparé
+                                    Commande finalisé
                                 {% endif %}
                             </td>
                             <td colspan="3" class="text-right">Total de la commande : </td>
                             <td>{{ prixTotal }} €</td>
                             <td>
-                                {% if items.orderReady %}
-                                <a href="#" class="btn btn-primary">Marqué la commande remise au client</a>
-                                {% else %}
-                                <a href="#" class="btn btn-primary">Marqué la commande prête</a>
+                                {% if items.recupByUser == 0 %}
+                                    {% if items.orderReady %}
+                                    <a href="{{ path('shop_validate-recup-order',{'id':items.id}) }}" class="btn btn-primary">Marqué la commande remise au client</a>
+                                    {% else %}
+                                    <a href="{{ path('shop_validate-prepare-order',{'id':items.id}) }}" class="btn btn-primary">Marqué la commande prête</a>
+                                    {% endif %}
                                 {% endif %}
                             </td>
 

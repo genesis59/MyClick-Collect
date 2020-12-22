@@ -2,35 +2,60 @@
 
 {% block sidebar %}
 <h3 class="text-white">Selectionnez une action:</h3>
-    <div class="row">
+    <div class="row border-bottom border-info">
         <div class="col">
-            <a href="{{ path('shop_admin',{'id': current_shop.id}) }}" class="btn btn-primary btn-block my-3">Retour à la liste des magasins</a>
+            <a 
+                href="{{ path('shop_admin',{'id': current_shop.id}) }}" 
+                class="btn btn-primary btn-block my-3">
+                Retour à la liste des magasins
+            </a>
         </div>
     </div>
+    <p class="text-white my-3">Gestion du magasin :</p>
     <div class="row">
         <div class="col">
-            <a href="{{ path('shop_list-sub-categories',{'id': current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Gérer les catégories</a>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col">
-            <a href="{{ path('shop_add-product',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Ajouter un produit </a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <a href="{{ path('shop_list-ordered-in-waiting',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Liste des commandes en attente de préparation</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <a href="{{ path('shop_list-ordered-ready-to-leave',{'id':current_shop.id}) }}" class="btn btn-primary btn-block mb-3">Liste des commandes en attente de récupération</a>
+            <a 
+                href="{{ path('shop_list-sub-categories',{'id': current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                Gérer les catégories
+            </a>
         </div>
     </div>
     <div class="row border-bottom border-info">
         <div class="col">
-            <a href="" class="btn btn-primary btn-block mb-3">Liste des commandes remis au client</a>
+            <a 
+                href="{{ path('shop_add-product',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                Ajouter un produit 
+            </a>
+        </div>
+    </div>
+    <p class="text-white my-3">Liste des commandes :</p>
+    <div class="row">
+        <div class="col">
+            <a 
+                href="{{ path('shop_list-ordered-in-waiting',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                En attente de préparation ({{ nb_order_validate }})
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a 
+                href="{{ path('shop_list-ordered-ready-to-leave',{'id':current_shop.id}) }}" 
+                class="btn btn-primary btn-block mb-3">
+                En attente de récupération ({{ nb_order_ready }})
+            </a>
+        </div>
+    </div>
+    <div class="row border-bottom border-info">
+        <div class="col">
+            <a 
+            href="{{ path('shop_list-ordered-delivered',{'id':current_shop.id}) }}" 
+            class="btn btn-primary btn-block mb-3">
+            Remises au client ({{ nb_order_delivered }})
+            </a>
         </div>
     </div>
 {% endblock %}

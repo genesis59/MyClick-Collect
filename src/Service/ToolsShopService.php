@@ -106,8 +106,7 @@ class ToolsShopService
     {
         // pagination of products by category
         $productsBySubCatList = [];
-        foreach ($this->shop->getShopSubCategories() as $subCategory) {
-            $current = 
+        foreach ($this->shop->getShopSubCategories() as $subCategory) { 
             $pagination = $this->pagination($this->productRepo->getProductsByShopBySubCat($this->recupCurrentShop(), $subCategory), 5);
             array_push($productsBySubCatList, $pagination);
         }

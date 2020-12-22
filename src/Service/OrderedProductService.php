@@ -45,16 +45,19 @@ class OrderedProductService
         $this->request = $request->getCurrentRequest();
     }
 
-
     /**
-     * count of product all state in cart
+     * count of product depending on progress by user
      *
-     * @param User $user
+     * @param String $field
+     * @param Entity $value
+     * @param boolean $status
+     * @param boolean $orderReady
+     * @param boolean $recupByUser
      * @return void
      */
-    public function getNbTotalProductInCart(User $user)
+    public function getNbTotalProductInProgressByField($field, $value, $status = false, $orderReady = false, $recupByUser = false)
     {
-        $orderedList = $this->orderedRepo->findBy(['user' => $user]);
+        $orderedList = $this->orderedRepo->findBy([$field => $value, 'status' => $status, 'orderReady' => $orderReady, 'recupByUser' => $recupByUser]);
         $nbToTalProductInCart = 0;
         foreach ($orderedList as $ordered) {
             $productListByOrdered = $this->orderedProductRepo->findBy(['ordered' => $ordered]);
@@ -64,20 +67,18 @@ class OrderedProductService
     }
 
     /**
-     * count of product no validate in cart
+     * count of product depending on progress by field
      *
-     * @param User $user
+     * @param String $field
+     * @param Entity $value
+     * @param integer $status
+     * @param integer $orderReady
+     * @param integer $recupByUser
      * @return void
      */
-    public function getNbTotalProductInCartNoValidate(User $user)
-    {
-        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 0]);
-        $nbToTalProductInCart = 0;
-        foreach ($orderedList as $ordered) {
-            $productListByOrdered = $this->orderedProductRepo->findBy(['ordered' => $ordered]);
-            $nbToTalProductInCart += count($productListByOrdered);
-        }
-        return $nbToTalProductInCart;
+    public function getNbTotalOrderedInProgressByField($field,$value, $status = 0, $orderReady = 0, $recupByUser = 0){
+        $orderedList = $this->orderedRepo->findBy([$field => $value, 'status' => $status, 'orderReady' => $orderReady, 'recupByUser' => $recupByUser]);
+        return count($orderedList);
     }
 
     /**
@@ -97,54 +98,14 @@ class OrderedProductService
     }
 
     /**
-     * get list of products from all ordered list of this user
+     * get list of products in progress from all ordered list of this user
      *
      * @param User $user
      * @return void
      */
-    public function getListProductByAllOrdered(User $user)
+    public function getListProductInProgressByUser(User $user, $status = 0, $orderReady = 0, $recupByUser = 0)
     {
-
-        $orderedList = $this->orderedRepo->findBy(['user' => $user]);
-        return $this->getOrderedProductByOrdered($orderedList);
-    }
-
-    /**
-     * get list of products from no validate ordered list of this user
-     *
-     * @param User $user
-     * @return void
-     */
-    public function getListProductByOrderedNoValidate(User $user)
-    {
-
-        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 0]);
-        return $this->getOrderedProductByOrdered($orderedList);
-    }
-
-    /**
-     * get list of products from validate ordered list of this user
-     *
-     * @param User $user
-     * @return void
-     */
-    public function getListProductByOrderedValidate(User $user)
-    {
-
-        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => 1, 'orderReady' => 0]);
-        return $this->getOrderedProductByOrdered($orderedList);
-    }
-
-    /**
-     * get list of products from ready ordered list of this user
-     *
-     * @param User $user
-     * @return void
-     */
-    public function getListProductByOrderedReady(User $user)
-    {
-
-        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'orderReady' => 1]);
+        $orderedList = $this->orderedRepo->findBy(['user' => $user, 'status' => $status, 'orderReady' => $orderReady, 'recupByUser' => $recupByUser]);
         return $this->getOrderedProductByOrdered($orderedList);
     }
 

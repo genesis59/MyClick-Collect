@@ -16,6 +16,13 @@
     </div>
 </div>
 <hr>
+{% if product_list_by_ordered == null %}
+    <div class="col-6 text-center bg-danger text-white rounded">
+        <p class="m-4">
+            Il n'y a aucun élément pour le moment.         
+        </p>
+    </div>
+{% endif %}
 {% for items in product_list_by_ordered %}
 {% if items[0].ordered.status %}
     {% include 'ordered/layout/validateCartProductPresentation.html.twig' %}     

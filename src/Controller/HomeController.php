@@ -35,12 +35,16 @@ class HomeController extends AbstractController
      * @param ShopCategoriesRepository $shopCategoriesRepository
      * @return Response
      */
-    public function index(ToolsShopService $shopService,Request $request, ShopCategoriesRepository $shopCategoriesRepository,OrderedProductService $or): Response
+    public function index(ToolsShopService $shopService, Request $request, ShopCategoriesRepository $shopCategoriesRepository, OrderedProductService $ops): Response
     {
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
-        if($user){
-            $nbToTalProductInCart = $or->getNbTotalProductInCartNoValidate($user);
+        if ($user) {
+            $nbToTalProductInCart = $ops->getNbTotalProductInProgressByField('user', $user);
+            dump($nbToTalProductInCart);
+            $nbToTalProductValidate = $ops->getNbTotalOrderedInProgressByField('user', $user, true);
+            $nbToTalProductReady = $ops->getNbTotalOrderedInProgressByField('user', $user, true, true);
+            $nbToTalProductDelivered = $ops->getNbTotalOrderedInProgressByField('user', $user, true, true, true);
         }
         $search = new TownSearch();
         $message = false;
@@ -58,8 +62,10 @@ class HomeController extends AbstractController
             'formSearchTown' => $form->createView(),
             'message' => $message,
             'search' => $search->getZipCodeSearch() || $search->getNameTownSearch(),
-            'nb_product_in_cart' => $nbToTalProductInCart
-
+            'nb_product_in_cart' => $nbToTalProductInCart,
+            'nb_order_validate' => $nbToTalProductValidate,
+            'nb_order_ready' => $nbToTalProductReady,
+            'nb_order_delivered' => $nbToTalProductDelivered
         ]);
     }
 
@@ -70,14 +76,20 @@ class HomeController extends AbstractController
      * 
      * @return Response
      */
-    public function userInsideShop(ToolsShopService $shopService,Shops $shop,OrderedProductService $or){
+    public function userInsideShop(ToolsShopService $shopService, Shops $shop, OrderedProductService $ops)
+    {
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
-        if($user){
-            $nbToTalProductInCart = $or->getNbTotalProductInCartNoValidate($user);
+        if ($user) {
+            $nbToTalProductInCart = $ops->getNbTotalProductInProgressByField('user', $user);
+            dump($nbToTalProductInCart);
+
+            $nbToTalProductValidate = $ops->getNbTotalOrderedInProgressByField('user', $user, true);
+            $nbToTalProductReady = $ops->getNbTotalOrderedInProgressByField('user', $user, true, true);
+            $nbToTalProductDelivered = $ops->getNbTotalOrderedInProgressByField('user', $user, true, true, true);
         }
-        
-        return $this->render('shop/userViewInsideShop.html.twig', [
+
+        return $this->render('user/userViewInsideShop.html.twig', [
             'controller_name' => 'home',
             'current_menu' => 'userInsideShop',
             'current_shop' => $shopService->getCurrentShop(),
@@ -85,8 +97,10 @@ class HomeController extends AbstractController
             'nbSubCat' => $shopService->getNumberOfCategories(),
             'products' => $shopService->createPaginationList(),
             'products_without_cat' => $shopService->productWithoutSubCategory(),
-            'nb_product_in_cart' => $nbToTalProductInCart
+            'nb_product_in_cart' => $nbToTalProductInCart,
+            'nb_order_validate' => $nbToTalProductValidate,
+            'nb_order_ready' => $nbToTalProductReady,
+            'nb_order_delivered' => $nbToTalProductDelivered
         ]);
     }
-    
 }
