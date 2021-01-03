@@ -39,6 +39,9 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
+        $nbToTalProductValidate = 0;
+        $nbToTalProductReady = 0;
+        $nbToTalProductDelivered = 0;
         if ($user) {
             $nbToTalProductInCart = $ops->getNbTotalProductInProgressByField('user', $user);
             dump($nbToTalProductInCart);
@@ -80,6 +83,9 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
         $nbToTalProductInCart = 0;
+        $nbToTalProductValidate = 0;
+        $nbToTalProductReady = 0;
+        $nbToTalProductDelivered = 0;
         if ($user) {
             $nbToTalProductInCart = $ops->getNbTotalProductInProgressByField('user', $user);
             dump($nbToTalProductInCart);

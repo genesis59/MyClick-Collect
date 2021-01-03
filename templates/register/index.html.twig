@@ -1,0 +1,63 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Inscription</h1>
+    {{ form_start(registerForm) }}
+
+    {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    <div class="row">
+        <div class="col-4">
+            {{ form_row(registerForm.email)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.password)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.confirmPassword)}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            {{ form_row(registerForm.firstName)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.lastName)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.phoneNumber)}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ form_row(registerForm.streetNumber)}}
+        </div>
+        <div class="col-6">
+            {{ form_row(registerForm.street)}}
+        </div>
+    </div>  
+    <p class="alert alert-info">Veuillez remplir le formulaire ci dessus avant de selectionnez votre région</p>
+    <div class="row">
+        <div class="col-4">
+            {{ form_row(registerForm.region)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.department)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(registerForm.town)}}
+        </div>
+    </div>
+    {{ form_end(registerForm) }}
+
+</div>
+{% endblock %}
+{% block javascripts %}
+<script src="{{ asset('js/userRegister.js') }}"></script>
+{% endblock %}

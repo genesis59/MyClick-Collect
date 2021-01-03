@@ -1,59 +1,52 @@
 <!-- shopList must be defined in the controller -->
-<div class="row mt-4">
-    {% if message %}
-        <div class="col-3"></div>
-        <div class="col-6 text-center bg-danger text-white rounded">
-            <p class="m-4">
-                Désolé il n'y a encore aucun commerce enregistrer dans cette commune.
-                N'hésitez pas à contacter votre commerçant et lui proposer nos services. 
-            </p>
-        </div>
-        <div class="col-3"></div>
-    {% endif %}
+<div class="mt-4">
     {% for shop in shopList %}
-        <div class="col-lg-6 col-xl-4 d-flex align-item-stretch">
-            <div class="card border border-dark mt-4 ml-5 bg-info" style="width: 18rem;">
-                <div class="btn-group dropleft m-1">
-                    <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Détails
-                    </button>
-                    <div class="dropdown-menu">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Propriétaire: {{ shop.trader.lastName }} {{ shop.trader.firstName }}</li>
-                            <li class="list-group-item">Email: {{ shop.email }}</li>
-                            <li class="list-group-item">Tél: {{ shop.phoneNumber }}</li>
-                            <li class="list-group-item">Adresse: {{ shop.streetNumber }},{{ shop.street }} à {{ shop.town }}</li>
-                            <li class="list-group-item">Région: {{ shop.town.department.region }}</li>
-                            <li class="list-group-item">Départment: {{ shop.town.department }}</li>
-                            <li class="list-group-item">Type: {{ shop.category.nameCategory }}</li>
-                        </ul>
-                    </div>
+    <div class="row bg-white p-3 border-bottom border-info">
+        <div class="col-3">
+            <img src="{{ asset('/images/' ~ shop.picture) }}" alt="Photo du magasin" height="160" width="200">
+        </div>
+        <div class="col-6">
+            <div class="row align-items-end">
+                <div class="col-8">
+                    <h5>{{ shop.nameShop }}</h5>
                 </div>
-                <img class="card-img-top p-3" src="{{ asset('/images/' ~ shop.picture) }}" alt="Photo du magasin" height="160" width="200">
-                <div class="card-body text-white">           
-                    <h5 class="card-title">{{ shop.nameShop }}</h5>
-                    <p class="card-text">{{ shop.presentation | u.truncate(50,' [...]',false) }}</p>
-                </div>
-                
-                <div class="card-body align-items-end text-white">
-                    <div class="row">
-                        {% if (controller_name is defined and controller_name == 'ShopAdmin') %}
-                        <div class="col-6">
-                            <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Modifier</a> 
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ path('shop_manage-shop',{'id':shop.id}) }}" class="btn btn-dark btn-block">Gérer</a> 
-                        </div>
-                        {% endif %}
-                        <div class="col-12 mt-3">
-                            <a href="{{ path('enter-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Entrer dans la boutique</a> 
+                <div class="col-4 text-right">
+                    <div class="btn-group dropleft m-1">
+                        <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Détails
+                        </button>
+                        <div class="dropdown-menu">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Propriétaire: {{ shop.trader.lastName }} {{ shop.trader.firstName }}</li>
+                                <li class="list-group-item">Email: {{ shop.email }}</li>
+                                <li class="list-group-item">Tél: {{ shop.phoneNumber }}</li>
+                                <li class="list-group-item">Adresse: {{ shop.streetNumber }},{{ shop.street }} à {{ shop.town }}</li>
+                                <li class="list-group-item">Région: {{ shop.town.department.region }}</li>
+                                <li class="list-group-item">Départment: {{ shop.town.department }}</li>
+                                <li class="list-group-item">Type: {{ shop.category.nameCategory }}</li>
+                            </ul>
                         </div>
                     </div>
-                </div>  
+                </div> 
+            </div>
+            <p class="mt-3">{{ shop.presentation }}</p>
+        </div>
+        <div class="col-3 mt-3">
+            {% if (controller_name is defined and controller_name == 'ShopAdmin') %}
+            <div class="col-12">
+                <a href="{{ path('shop_edit-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Modifier</a> 
+            </div>
+            <div class="col-12 mt-3">
+                <a href="{{ path('shop_manage-shop',{'id':shop.id}) }}" class="btn btn-dark btn-block">Gérer</a> 
+            </div>
+            {% endif %}
+            <div class="col-12 mt-3">
+                <a href="{{ path('enter-shop',{'id': shop.id}) }}" class="btn btn-dark btn-block">Entrer</a> 
             </div>
         </div>
+    </div>
     {% endfor %} 
-</div> 
-<div class="row justify-content-center mt-4">
-    {{ knp_pagination_render(shopList) }}
+    <div class="row justify-content-center mt-4">
+        {{ knp_pagination_render(shopList) }}
+    </div>
 </div>
